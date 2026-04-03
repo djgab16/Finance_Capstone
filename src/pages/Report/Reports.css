@@ -1,0 +1,42 @@
+.reports-layout { display: grid; grid-template-columns: 280px 1fr; gap: var(--gap); }
+
+/* Config Panel */
+.reports-config { position: sticky; top: 80px; height: fit-content; }
+.config-section { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.radio-option { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+.radio-option:hover { border-color: var(--border-hover); }
+.radio-option.active { border-color: var(--primary); background: rgba(0,169,157,0.04); }
+.radio-option input[type="radio"] { accent-color: var(--primary); margin-bottom: 2px; }
+.radio-desc { font-size: 0.72rem; color: var(--text-secondary); font-weight: 400; }
+.config-quick-dates { display: flex; gap: 6px; margin-top: 4px; }
+.quick-date-btn { padding: 5px 14px; border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 500; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+.quick-date-btn:hover { border-color: var(--border-hover); }
+.quick-date-btn.active { background: var(--primary-dark); color: white; border-color: var(--primary-dark); }
+
+/* Report Content */
+.reports-main { display: flex; flex-direction: column; gap: var(--gap); }
+.report-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.report-header h2 { font-size: 1.4rem; margin: 4px 0; }
+
+/* Charts */
+.charts-row { display: flex; gap: var(--gap); }
+.chart-card { min-height: 280px; }
+.chart-legend { display: flex; gap: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-secondary); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+.pie-chart-wrapper { position: relative; }
+.pie-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.pie-center-text strong { font-size: 1.6rem; font-weight: 800; display: block; color: var(--text-primary); }
+.pie-center-text span { font-size: 0.72rem; color: var(--text-secondary); }
+.pie-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.pie-legend span { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-secondary); }
+.pie-legend strong { margin-left: auto; color: var(--text-primary); }
+
+/* Driver Performance */
+.driver-perf-table thead { background: var(--primary-dark); }
+.driver-perf-table thead th { color: rgba(255,255,255,0.8) !important; padding: 12px !important; }
+.rate-bar-wrapper { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
+.rate-bar { width: 60px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.rate-bar-fill { height: 100%; background: var(--status-active); border-radius: 3px; }
+.rating-badge { color: var(--status-active); font-size: 0.82rem; font-weight: 600; }

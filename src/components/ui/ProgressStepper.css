@@ -1,0 +1,93 @@
+.progress-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.stepper-node-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.stepper-node {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  border: 2.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.stepper-connector {
+  flex-grow: 1;
+  height: 2.5px;
+  background: var(--border);
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.stepper-step.completed .stepper-node {
+  background: var(--status-active);
+  border-color: var(--status-active);
+  color: white;
+}
+
+.stepper-step.completed .stepper-connector {
+  background: var(--status-active);
+}
+
+.stepper-step.active .stepper-node {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 0 4px var(--status-transit-bg);
+}
+
+.stepper-info {
+  text-align: center;
+}
+
+.stepper-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stepper-sublabel {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.stepper-info .stepper-label {
+  transition: color 0.3s ease;
+}
+
+.stepper-step.active .stepper-label {
+  color: var(--primary);
+}
+
+.stepper-check {
+  font-size: 1.15rem;
+}

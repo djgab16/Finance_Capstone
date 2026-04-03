@@ -1,0 +1,31 @@
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.role-super-admin {
+  background: var(--role-super-admin);
+  color: white;
+}
+
+.role-admin {
+  background: var(--role-admin);
+  color: white;
+}
+
+.role-ops {
+  background: var(--role-ops-team);
+  color: white;
+}
+
+.role-driver {
+  background: #E9EDF7;
+  color: var(--text-primary);
+}
