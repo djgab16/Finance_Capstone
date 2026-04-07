@@ -1,7 +1,7 @@
 import type { Employee, DeliveryOrder, Notification, ActivityLog, DriverPerformance } from '../types';
 
 export const employees: Employee[] = [
-  { id: 'EMP-001', name: 'Vanessa D. Reuteras', role: 'SUPER ADMIN', systemAccess: 'All Systems', status: 'Active' },
+  { id: 'EMP-001', name: 'Taromaru Rex Gabriel', role: 'SUPER ADMIN', systemAccess: 'All Systems', status: 'Active' },
   { id: 'EMP-002', name: 'Kenneth D. Yulip', role: 'ADMIN', systemAccess: 'Operations', status: 'Active' },
   { id: 'EMP-003', name: 'John Angelo M. Reveche', role: 'OP. TEAM', systemAccess: 'Delivery Tracker', status: 'Active' },
   { id: 'EMP-004', name: 'Hermione B. Benitez', role: 'OP. TEAM', systemAccess: 'Operations', status: 'Pending' },
@@ -119,11 +119,11 @@ export const driverPerformance: DriverPerformance[] = [
 ];
 
 export const activityFeed = [
-  { text: 'Reuteras, V. created account for Dumiao, J.', time: '2 mins ago', color: '#00A99D' },
+  { text: 'Gabriel, T. created account for Dumiao, J.', time: '2 mins ago', color: '#00A99D' },
   { text: 'Gabriel, D. failed login — account locked', time: '14 mins ago', color: '#E31A1A' },
   { text: 'Yulip, K. assigned task to Benitez, H.', time: '32 mins ago', color: '#00A99D' },
   { text: 'Reveche, J. marked Task #018 as complete', time: '1 hr ago', color: '#01B574' },
-  { text: 'Reuteras, V. updated role for Ogaya, J. → Admin', time: '2 hrs ago', color: '#E31A1A' },
+  { text: 'Gabriel, T. updated role for Ogaya, J. → Admin', time: '2 hrs ago', color: '#E31A1A' },
 ];
 
 export const dailyDeliveries = [

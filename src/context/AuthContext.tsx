@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import type { Employee } from '../types';
 
 interface AuthContextType {
@@ -13,7 +13,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<Employee | null>(() => {
     const savedUser = localStorage.getItem('speedex_user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    if (savedUser) {
+      const parsed = JSON.parse(savedUser) as Employee;
+      // Migration: Update name if it matches the old Super Admin
+      if (parsed.id === 'EMP-001' && parsed.name === 'Vanessa D. Reuteras') {
+        return { ...parsed, name: 'Taromaru Rex Gabriel' };
+      }
+      return parsed;
+    }
+    return null;
   });
 
   const login = (employee: Employee) => {

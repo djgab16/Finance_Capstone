@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, Clock, MapPin, Package, Eye, Download, RefreshCw } from 'lucide-react';
+import { Search, Clock, MapPin, Package, Eye, Download, RefreshCw, History } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/layout/Header';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { useData } from '../../context/DataContext';
@@ -8,18 +9,24 @@ import './TrackDelivery.css';
 
 export default function TrackDelivery() {
   const { deliveryOrders } = useData();
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [trackedOrder, setTrackedOrder] = useState<DeliveryOrder | null>(null);
   const [error, setError] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  const handleTrack = () => {
+  const handleTrack = (eOrString?: any) => {
     setError(false);
+    const searchVal = typeof eOrString === 'string' ? eOrString : query;
+    if (!searchVal.trim()) return;
+
     const found = deliveryOrders.find(o => 
-      o.waybillNo.toLowerCase() === query.toLowerCase().trim()
+      o.waybillNo.toLowerCase() === searchVal.toLowerCase().trim()
     );
     
     if (found) {
       setTrackedOrder(found);
+      setRecentSearches(prev => Array.from(new Set([found.waybillNo, ...prev])).slice(0, 5));
     } else {
       setTrackedOrder(null);
       setError(true);
@@ -66,12 +73,35 @@ export default function TrackDelivery() {
                   id="track-search-input" 
                 />
               </div>
-              <button className="btn btn-primary btn-lg track-btn" onClick={handleTrack} id="track-now-btn">
+              <button className="btn btn-primary btn-lg track-btn" onClick={() => handleTrack()} id="track-now-btn">
                 <Search size={16} /> TRACK NOW
               </button>
             </div>
             {trackedOrder && <p className="track-result-text">Result shown below · <span className="teal">{trackedOrder.waybillNo}</span> found — Last updated: {trackedOrder.lastUpdated}</p>}
             {error && <p className="track-result-text" style={{ color: '#FFCDCD' }}>Waybill not found. Please check the number and try again.</p>}
+            
+            {recentSearches.length > 0 && !trackedOrder && (
+              <div className="recent-searches">
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                  <History size={14} /> Recent Searches
+                </span>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {recentSearches.map(rs => (
+                    <button 
+                      key={rs} 
+                      className="btn btn-outline btn-sm" 
+                      style={{ background: 'rgba(255,255,255,0.1)', color: 'white', borderColor: 'transparent' }}
+                      onClick={() => {
+                        setQuery(rs);
+                        handleTrack(rs);
+                      }}
+                    >
+                      {rs}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -176,8 +206,8 @@ export default function TrackDelivery() {
               <div className="card">
                 <span className="label">ACTIONS</span>
                 <div className="detail-actions">
-                  <button className="btn btn-primary" onClick={handleTrack}><RefreshCw size={16} /> REFRESH TRACKING</button>
-                  <button className="btn btn-dark" onClick={() => window.location.href=`/delivery-orders/${trackedOrder.id}`}><Eye size={16} /> VIEW FULL ORDER</button>
+                  <button className="btn btn-primary" onClick={() => handleTrack()}><RefreshCw size={16} /> REFRESH TRACKING</button>
+                  <button className="btn btn-dark" onClick={() => navigate(`/delivery-orders/${trackedOrder.id}`)}><Eye size={16} /> VIEW FULL ORDER</button>
                   <button className="btn btn-outline" disabled><Download size={16} /> EXPORT / PRINT</button>
                 </div>
               </div>

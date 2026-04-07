@@ -10,6 +10,10 @@ export default function DeliveryOrders() {
   const { deliveryOrders, deleteDeliveryOrder } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [areaFilter, setAreaFilter] = useState('All Areas');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const uniqueAreas = Array.from(new Set(deliveryOrders.map(o => o.area).filter(Boolean)));
 
   const filteredOrders = deliveryOrders.filter(order => {
     const matchesSearch =
@@ -18,8 +22,9 @@ export default function DeliveryOrders() {
       order.recipientName.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'All Status' || order.status === statusFilter;
+    const matchesArea = areaFilter === 'All Areas' || order.area === areaFilter;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesArea;
   });
 
   const handleDelete = (id: string) => {
@@ -95,16 +100,40 @@ export default function DeliveryOrders() {
             <option>Completed</option>
             <option>Failed</option>
           </select>
-          <select className="filter-select" id="area-filter">
+          <select 
+            className="filter-select" 
+            id="area-filter"
+            value={areaFilter}
+            onChange={e => setAreaFilter(e.target.value)}
+          >
             <option>All Areas</option>
-            <option>Quezon City</option>
-            <option>Makati City</option>
-            <option>Taguig City</option>
+            {uniqueAreas.map(a => <option key={a} value={a}>{a}</option>)}
           </select>
-          <button className="btn btn-outline btn-sm" id="more-filters-btn">
+          <button 
+            className={`btn btn-sm ${showFilters ? 'btn-primary' : 'btn-outline'}`} 
+            id="more-filters-btn"
+            onClick={() => setShowFilters(!showFilters)}
+          >
             <Filter size={14} /> More Filters
           </button>
         </div>
+
+        {showFilters && (
+          <div style={{ background: 'white', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #eee', display: 'flex', gap: '16px' }}>
+            <div className="form-group" style={{ margin: 0, flex: 1 }}>
+              <label className="form-label" style={{ fontSize: '12px' }}>Date Range (Placeholder)</label>
+              <input type="date" className="filter-select" style={{ width: '100%', height: '40px' }} />
+            </div>
+            <div className="form-group" style={{ margin: 0, flex: 1 }}>
+              <label className="form-label" style={{ fontSize: '12px' }}>Clear Filters</label>
+              <button className="btn btn-outline" style={{ height: '40px' }} onClick={() => {
+                setSearchTerm('');
+                setStatusFilter('All Status');
+                setAreaFilter('All Areas');
+              }}>Reset Options</button>
+            </div>
+          </div>
+        )}
 
         {/* Orders Table */}
         <div className="card">

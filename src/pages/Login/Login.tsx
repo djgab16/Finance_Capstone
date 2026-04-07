@@ -20,11 +20,9 @@ export default function Login() {
     e.preventDefault();
     setError('');
 
-    // For demonstration, we'll allow any valid employee ID from our data
-    // In a real app, you'd check password too
     const employee = employees.find(emp => emp.id === employeeId);
 
-    if (employee) {
+    if (employee && password === 'password123') {
       if (employee.status === 'Locked') {
         navigate('/account-locked');
         return;
@@ -105,7 +103,7 @@ export default function Login() {
               />
             </div>
             <small style={{ color: 'var(--text-secondary)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
-              Try: EMP-001 (Super Admin) or EMP-003 (Op. Team)
+              Try: EMP-001 (Super Admin) or EMP-003 (Op. Team). Password: <b>password123</b>
             </small>
           </div>
 

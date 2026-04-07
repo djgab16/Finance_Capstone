@@ -15,6 +15,9 @@ interface DataContextType {
   deleteDeliveryOrder: (id: string) => void;
   addNotification: (notification: Notification) => void;
   markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
+  deleteNotification: (id: string) => void;
+  clearAllNotifications: () => void;
   addActivityLog: (log: ActivityLog) => void;
 }
 
@@ -23,7 +26,16 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [employees, setEmployees] = useState<Employee[]>(() => {
     const saved = localStorage.getItem('speedex_employees');
-    return saved ? JSON.parse(saved) : initialEmployees;
+    if (saved) {
+      const parsed = JSON.parse(saved) as Employee[];
+      // Migration: Update old superadmin name to new one
+      return parsed.map(emp => 
+        emp.id === 'EMP-001' && emp.name === 'Vanessa D. Reuteras' 
+          ? { ...emp, name: 'Taromaru Rex Gabriel' } 
+          : emp
+      );
+    }
+    return initialEmployees;
   });
 
   const [deliveryOrders, setDeliveryOrders] = useState<DeliveryOrder[]>(() => {
@@ -89,6 +101,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
+  const markAllNotificationsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+
   const addActivityLog = (log: ActivityLog) => {
     setActivityLogs(prev => [log, ...prev]);
   };
@@ -107,6 +131,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       deleteDeliveryOrder,
       addNotification,
       markNotificationRead,
+      markAllNotificationsRead,
+      deleteNotification,
+      clearAllNotifications,
       addActivityLog
     }}>
       {children}

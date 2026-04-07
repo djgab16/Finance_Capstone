@@ -26,7 +26,6 @@ export default function EditDeliveryOrder() {
         navigate('/delivery-orders');
       }
     } else {
-      // Default values for new order
       setFormData({
         waybillNo: `SPX-2026-${Math.floor(1000 + Math.random() * 9000)}`,
         orderDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
@@ -50,6 +49,11 @@ export default function EditDeliveryOrder() {
   };
 
   const handleSave = () => {
+    if (!formData.expectedDelivery || !formData.area || !formData.clientName || !formData.senderAddress || !formData.recipientName || !formData.recipientContact || !formData.recipientAddress) {
+      alert('Please fill in all required fields (marked with *).');
+      return;
+    }
+
     if (isNew) {
       const newOrder = {
         ...formData,
@@ -89,6 +93,17 @@ export default function EditDeliveryOrder() {
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       deleteDeliveryOrder(id!);
+      addActivityLog({
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleString(),
+        userName: user?.name || 'System',
+        userRole: user?.role || 'Staff',
+        userInitials: user?.name ? user.name.split(' ').map(n => n[0]).join('') : 'SY',
+        userColor: '#E31A1A',
+        action: 'Delete',
+        description: `Deleted delivery order ${formData.waybillNo}`,
+        reference: formData.waybillNo
+      });
       navigate('/delivery-orders');
     }
   };

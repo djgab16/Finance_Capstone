@@ -1,7 +1,8 @@
 import { Download, FileText, Plus, Pencil, CheckCircle2, Users, X, Eye } from 'lucide-react';
 import Header from '../../components/layout/Header';
 import StatCard from '../../components/ui/StatCard';
-import { activityLogs } from '../../data/mockData';
+import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 import type { ActionType } from '../../types';
 import './ActivityLogs.css';
 
@@ -11,12 +12,17 @@ const actionColors: Record<ActionType, string> = {
 };
 
 export default function ActivityLogs() {
+  const { activityLogs } = useData();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER ADMIN';
+  const displayedLogs = isAdmin ? activityLogs : activityLogs.filter(log => log.userName === user?.name);
+
   return (
     <>
       <Header
-        title="Delivery Tracker / Activity Logs"
+        title={isAdmin ? "System Activity Logs" : "Your Activity Logs"}
         subtitle="DELIVERY TRACKER · SYSTEM"
-        date="Saturday, March 29, 2026"
+        date={new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         actions={
           <div className="flex gap-sm">
             <button className="btn btn-outline btn-sm"><Download size={14} /> Export Logs</button>
@@ -25,18 +31,16 @@ export default function ActivityLogs() {
         }
       />
       <div className="page-content">
-        {/* Stats */}
         <div className="stats-row" style={{ gridTemplateColumns: 'repeat(6, 1fr)' }}>
-          <StatCard icon={<FileText size={18} />} iconColor="var(--primary)" iconBg="var(--status-transit-bg)" label="TOTAL LOGS TODAY" value="1,482" />
-          <StatCard icon={<Plus size={18} />} iconColor="var(--status-active)" iconBg="var(--status-active-bg)" label="RECORDS CREATED" value="284" />
-          <StatCard icon={<Pencil size={18} />} iconColor="var(--status-pending)" iconBg="var(--status-pending-bg)" label="UPDATES MADE" value="931" />
-          <StatCard icon={<CheckCircle2 size={18} />} iconColor="var(--status-active)" iconBg="var(--status-active-bg)" label="POD UPLOADS" value="98" />
-          <StatCard icon={<Users size={18} />} iconColor="var(--primary)" iconBg="var(--status-transit-bg)" label="ACTIVE USERS" value="8" />
-          <StatCard icon={<X size={18} />} iconColor="var(--status-failed)" iconBg="var(--status-failed-bg)" label="DELETIONS" value="3" />
+          <StatCard icon={<FileText size={18} />} iconColor="var(--primary)" iconBg="var(--status-transit-bg)" label={isAdmin ? "TOTAL LOGS TODAY" : "YOUR LOGS TODAY"} value={displayedLogs.length} />
+          <StatCard icon={<Plus size={18} />} iconColor="var(--status-active)" iconBg="var(--status-active-bg)" label="RECORDS CREATED" value={displayedLogs.filter(l => l.action === 'Create').length} />
+          <StatCard icon={<Pencil size={18} />} iconColor="var(--status-pending)" iconBg="var(--status-pending-bg)" label="UPDATES MADE" value={displayedLogs.filter(l => l.action === 'Update').length} />
+          <StatCard icon={<CheckCircle2 size={18} />} iconColor="var(--status-active)" iconBg="var(--status-active-bg)" label="POD UPLOADS" value={displayedLogs.filter(l => l.action === 'POD Upload').length} />
+          {isAdmin && <StatCard icon={<Users size={18} />} iconColor="var(--primary)" iconBg="var(--status-transit-bg)" label="ACTIVE USERS" value="8" />}
+          {isAdmin && <StatCard icon={<X size={18} />} iconColor="var(--status-failed)" iconBg="var(--status-failed-bg)" label="DELETIONS" value={displayedLogs.filter(l => l.action === 'Delete').length} />}
         </div>
 
         <div className="logs-layout">
-          {/* Filter Sidebar */}
           <div className="card logs-filter">
             <div className="card-header"><h4>Filters</h4><button className="text-link">Clear</button></div>
             <div className="form-group"><label className="form-label">SEARCH</label><input className="form-input" placeholder="Search user, waybill..." /></div>
@@ -51,21 +55,23 @@ export default function ActivityLogs() {
               <label className="check-option"><input type="checkbox" /> Archive <span className="check-count">110</span></label>
               <label className="check-option"><input type="checkbox" /> Delete <span className="check-count">3</span></label>
             </div>
-            <div className="form-group">
-              <label className="form-label">USERS</label>
-              <label className="check-option"><input type="checkbox" /> Gabriel, D.</label>
-              <label className="check-option"><input type="checkbox" /> Conag, R.</label>
-              <label className="check-option"><input type="checkbox" /> Panaligan, S.</label>
-              <label className="check-option"><input type="checkbox" /> Dumlao, J.</label>
-            </div>
+              {isAdmin && (
+                <div className="form-group">
+                  <label className="form-label">USERS</label>
+                  <label className="check-option"><input type="checkbox" /> Gabriel, D.</label>
+                  <label className="check-option"><input type="checkbox" /> Conag, R.</label>
+                  <label className="check-option"><input type="checkbox" /> Panaligan, S.</label>
+                  <label className="check-option"><input type="checkbox" /> Dumlao, J.</label>
+                </div>
+              )}
+
           </div>
 
-          {/* Table */}
           <div className="card" style={{ flex: 1 }}>
             <div className="card-header">
               <div className="flex items-center gap-sm">
-                <h4>System Activity Log</h4>
-                <span className="archive-count-badge">1,482 entries</span>
+                <h4>{isAdmin ? 'System Activity Log' : 'Your Activity Log'}</h4>
+                <span className="archive-count-badge">{displayedLogs.length} entries</span>
               </div>
               <a href="#" className="view-all-link">Export →</a>
             </div>
@@ -81,7 +87,7 @@ export default function ActivityLogs() {
                 </tr>
               </thead>
               <tbody>
-                {activityLogs.map(log => (
+                {displayedLogs.map(log => (
                   <tr key={log.id}>
                     <td className="text-sm text-muted">{log.timestamp}</td>
                     <td>
@@ -99,7 +105,7 @@ export default function ActivityLogs() {
               </tbody>
             </table>
             <div className="table-pagination">
-              <span className="pagination-info">Showing 1-8 of 1,482 log entries today</span>
+              <span className="pagination-info">Showing {displayedLogs.length} log entries today</span>
               <div className="pagination-controls">
                 <button className="pagination-btn" disabled>‹</button>
                 <button className="pagination-btn active">1</button>

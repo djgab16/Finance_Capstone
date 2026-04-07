@@ -13,6 +13,12 @@ import Reports from './pages/Report/Reports';
 import Archive from './pages/Archive/Archive';
 import ActivityLogs from './pages/ActivityLogs/ActivityLogs';
 import FailedPickups from './pages/FailedPickups/FailedPickups';
+import Employees from './pages/Employees/Employees';
+import RoleAccess from './pages/RoleAccess/RoleAccess';
+import Settings from './pages/Settings/Settings';
+import DeliverySummary from './pages/DeliverySummary/DeliverySummary';
+import AnalyticsView from './pages/Analytics/AnalyticsView';
+import Tasks from './pages/Tasks/Tasks';
 
 export default function App() {
   return (
@@ -23,27 +29,36 @@ export default function App() {
         <Route path="/account-locked" element={<AccountLocked />} />
 
         {/* Protected Dashboard Pages (with sidebar) */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<DashboardLayout />}>
+        <Route element={<DashboardLayout />}>
+          {/* General Access Routes */}
+          <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/delivery-orders" element={<DeliveryOrders />} />
             <Route path="/delivery-orders/:id" element={<DeliveryOrderDetail />} />
             <Route path="/delivery-orders/:id/edit" element={<EditDeliveryOrder />} />
             <Route path="/track" element={<TrackDelivery />} />
-            <Route path="/pod-records" element={<DeliveryOrders />} />
-            <Route path="/reports" element={<Reports />} />
             <Route path="/search-waybill" element={<TrackDelivery />} />
             <Route path="/archive" element={<Archive />} />
-            <Route path="/employees" element={<DeliveryOrders />} />
-            <Route path="/tasks" element={<DeliveryOrders />} />
-            <Route path="/role-access" element={<Reports />} />
-            <Route path="/delivery-summary" element={<Reports />} />
-            <Route path="/analytics" element={<Reports />} />
-            <Route path="/settings" element={<ActivityLogs />} />
-            <Route path="/activity-logs" element={<ActivityLogs />} />
             <Route path="/failed-pickups" element={<FailedPickups />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/pod-records" element={<DeliveryOrders />} />
+            <Route path="/activity-logs" element={<ActivityLogs />} />
+          </Route>
+
+          {/* Admin & Super Admin Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPER ADMIN']} />}>
+            <Route path="/employees" element={<Employees />} />
+            <Route path="/delivery-summary" element={<DeliverySummary />} />
+            <Route path="/analytics" element={<AnalyticsView />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+
+          {/* Super Admin Only Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['SUPER ADMIN']} />}>
+            <Route path="/role-access" element={<RoleAccess />} />
           </Route>
         </Route>
 

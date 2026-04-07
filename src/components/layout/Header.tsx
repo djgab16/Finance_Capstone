@@ -1,4 +1,6 @@
 import { Search, RefreshCw, Bell } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useData } from '../../context/DataContext';
 import './Header.css';
 
 interface HeaderProps {
@@ -9,6 +11,10 @@ interface HeaderProps {
 }
 
 export default function Header({ title, subtitle, date, actions }: HeaderProps) {
+  const navigate = useNavigate();
+  const { notifications } = useData();
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   const displayDate = date || new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
@@ -30,11 +36,11 @@ export default function Header({ title, subtitle, date, actions }: HeaderProps) 
             id="header-search"
           />
         </div>
-        <button className="header-notification-btn" id="header-notifications" title="Notifications">
+        <button className="header-notification-btn" id="header-notifications" title="Notifications" onClick={() => navigate('/notifications')}>
           <Bell size={20} />
-          <span className="notification-dot" />
+          {unreadCount > 0 && <span className="notification-dot" />}
         </button>
-        <button className="header-refresh-btn" id="header-refresh" title="Refresh">
+        <button className="header-refresh-btn" id="header-refresh" title="Refresh" onClick={() => window.location.reload()}>
           <RefreshCw size={18} />
         </button>
         {actions}

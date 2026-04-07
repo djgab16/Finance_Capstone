@@ -1,26 +1,35 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ClipboardList, FileText, BarChart3,
-  Settings, Activity, Bell, LogOut
+  Settings, Activity, LogOut
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo.png';
 import './Sidebar.css';
 
-const mainLinks = [
+import type { UserRole } from '../../types';
+
+interface NavLinkConfig {
+  to: string;
+  icon: any;
+  label: string;
+  allowedRoles?: UserRole[];
+}
+
+const mainLinks: NavLinkConfig[] = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/employees', icon: Users, label: 'Employees' },
+  { to: '/employees', icon: Users, label: 'Employees', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
   { to: '/tasks', icon: ClipboardList, label: 'Tasks' },
-  { to: '/role-access', icon: FileText, label: 'Role Access' },
+  { to: '/role-access', icon: FileText, label: 'Role Access', allowedRoles: ['SUPER ADMIN'] },
 ];
 
-const integrationLinks = [
-  { to: '/delivery-summary', icon: FileText, label: 'Delivery Summary' },
-  { to: '/analytics', icon: BarChart3, label: 'Analytics View' },
+const integrationLinks: NavLinkConfig[] = [
+  { to: '/delivery-summary', icon: FileText, label: 'Delivery Summary', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
+  { to: '/analytics', icon: BarChart3, label: 'Analytics View', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
 ];
 
-const systemLinks = [
-  { to: '/settings', icon: Settings, label: 'Settings' },
+const systemLinks: NavLinkConfig[] = [
+  { to: '/settings', icon: Settings, label: 'Settings', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
   { to: '/activity-logs', icon: Activity, label: 'Activity Logs' },
 ];
 
@@ -36,6 +45,12 @@ export default function Sidebar() {
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  };
+
+  const hasAccess = (link: NavLinkConfig) => {
+    if (!link.allowedRoles) return true;
+    if (!user) return false;
+    return link.allowedRoles.includes(user.role);
   };
 
   return (
@@ -56,7 +71,7 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         <div className="nav-section">
           <span className="nav-section-title">MAIN MENU</span>
-          {mainLinks.map(link => (
+          {mainLinks.filter(hasAccess).map(link => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -70,37 +85,41 @@ export default function Sidebar() {
           ))}
         </div>
 
-        <div className="nav-section">
-          <span className="nav-section-title">INTEGRATION</span>
-          {integrationLinks.map(link => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `nav-item ${isActive ? 'nav-item-active' : ''}`
-              }
-            >
-              <link.icon size={18} />
-              <span className="nav-item-label">{link.label}</span>
-            </NavLink>
-          ))}
-        </div>
+        {integrationLinks.filter(hasAccess).length > 0 && (
+          <div className="nav-section">
+            <span className="nav-section-title">INTEGRATION</span>
+            {integrationLinks.filter(hasAccess).map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `nav-item ${isActive ? 'nav-item-active' : ''}`
+                }
+              >
+                <link.icon size={18} />
+                <span className="nav-item-label">{link.label}</span>
+              </NavLink>
+            ))}
+          </div>
+        )}
 
-        <div className="nav-section">
-          <span className="nav-section-title">SYSTEM</span>
-          {systemLinks.map(link => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `nav-item ${isActive ? 'nav-item-active' : ''}`
-              }
-            >
-              <link.icon size={18} />
-              <span className="nav-item-label">{link.label}</span>
-            </NavLink>
-          ))}
-        </div>
+        {systemLinks.filter(hasAccess).length > 0 && (
+          <div className="nav-section">
+            <span className="nav-section-title">SYSTEM</span>
+            {systemLinks.filter(hasAccess).map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `nav-item ${isActive ? 'nav-item-active' : ''}`
+                }
+              >
+                <link.icon size={18} />
+                <span className="nav-item-label">{link.label}</span>
+              </NavLink>
+            ))}
+          </div>
+        )}
       </nav>
 
       <div className="sidebar-footer-profile">
