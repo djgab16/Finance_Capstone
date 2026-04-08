@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { AlertTriangle, Calendar, Save, Undo2, Trash2 } from 'lucide-react';
+import { AlertTriangle, Calendar, Save, Undo2, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
 import Header from '../../components/layout/Header';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { useData } from '../../context/DataContext';
@@ -46,6 +46,21 @@ export default function EditDeliveryOrder() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ 
+          ...prev, 
+          podImage: reader.result as string,
+          podStatus: 'Submitted'
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSave = () => {
@@ -240,6 +255,37 @@ export default function EditDeliveryOrder() {
                 <div className="summary-field"><span>Encoded By</span><span>{formData.encodedBy}</span></div>
                 <div className="summary-field"><span>Last Updated</span><span>{new Date().toLocaleTimeString()}</span></div>
                 <div className="summary-field"><span>Status</span><span>{formData.status}</span></div>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-header">
+                <h4>Proof of Delivery</h4>
+              </div>
+              <div className="pod-upload-area" style={{ marginTop: '12px', border: '2px dashed var(--border)', borderRadius: '8px', padding: '20px', textAlign: 'center', background: 'var(--bg-main)' }}>
+                {formData.podImage ? (
+                  <div style={{ position: 'relative' }}>
+                    <img src={formData.podImage} alt="POD Preview" style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: '4px' }} />
+                    <button 
+                      className="btn btn-sm btn-danger" 
+                      style={{ position: 'absolute', top: '8px', right: '8px' }}
+                      onClick={(e) => { e.preventDefault(); setFormData(p => ({ ...p, podImage: undefined, podStatus: 'Not Submitted' })) }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ padding: '12px', background: 'white', borderRadius: '50%', color: 'var(--text-secondary)' }}>
+                      <ImageIcon size={24} />
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>No POD uploaded yet.</p>
+                    <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer', marginTop: '8px' }}>
+                      <Upload size={14} /> Upload Image
+                      <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
 

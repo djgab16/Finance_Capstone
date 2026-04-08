@@ -35,6 +35,7 @@ export interface DeliveryOrder {
   itemCount: number;
   weight: string;
   declaredValue: string;
+  podImage?: string;
   specialInstructions?: string;
   orderDate: string;
   expectedDelivery: string;
