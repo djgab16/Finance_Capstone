@@ -19,6 +19,7 @@ import Settings from './pages/Settings/Settings';
 import DeliverySummary from './pages/DeliverySummary/DeliverySummary';
 import AnalyticsView from './pages/Analytics/AnalyticsView';
 import Tasks from './pages/Tasks/Tasks';
+import DeliveryHistoryLog from './pages/DeliveryOrders/DeliveryHistoryLog';
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/delivery-orders" element={<DeliveryOrders />} />
             <Route path="/delivery-orders/:id" element={<DeliveryOrderDetail />} />
+            <Route path="/delivery-orders/:id/history" element={<DeliveryHistoryLog />} />
             <Route path="/delivery-orders/:id/edit" element={<EditDeliveryOrder />} />
             <Route path="/track" element={<TrackDelivery />} />
             <Route path="/search-waybill" element={<TrackDelivery />} />

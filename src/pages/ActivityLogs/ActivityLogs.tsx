@@ -1,4 +1,5 @@
 import { Download, FileText, Plus, Pencil, CheckCircle2, Users, X, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/layout/Header';
 import StatCard from '../../components/ui/StatCard';
 import { useData } from '../../context/DataContext';
@@ -12,8 +13,9 @@ const actionColors: Record<ActionType, string> = {
 };
 
 export default function ActivityLogs() {
-  const { activityLogs } = useData();
+  const { activityLogs, deliveryOrders } = useData();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER ADMIN';
   const displayedLogs = isAdmin ? activityLogs : activityLogs.filter(log => log.userName === user?.name);
 
@@ -99,7 +101,22 @@ export default function ActivityLogs() {
                     <td><span className="action-badge" style={{ background: actionColors[log.action] + '18', color: actionColors[log.action] }}>{log.action}</span></td>
                     <td className="text-sm desc-cell">{log.description}</td>
                     <td className="text-sm text-muted">{log.reference || '—'}</td>
-                    <td><button className="action-icon-btn"><Eye size={14} /></button></td>
+                    <td>
+                      <button 
+                        className="action-icon-btn" 
+                        onClick={() => {
+                          if (log.reference && log.reference.startsWith('SPX-')) {
+                            const order = deliveryOrders.find(o => o.waybillNo === log.reference);
+                            if (order) navigate(`/delivery-orders/${order.id}/history`);
+                            else alert('Delivery Order not found for reference: ' + log.reference);
+                          } else {
+                            alert('No valid Delivery Order reference for this event.');
+                          }
+                        }}
+                      >
+                        <Eye size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
