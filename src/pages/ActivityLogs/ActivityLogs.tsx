@@ -16,7 +16,7 @@ export default function ActivityLogs() {
   const { activityLogs, deliveryOrders } = useData();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER ADMIN';
+  const isAdmin = user?.role === 'ADMIN';
   const displayedLogs = isAdmin ? activityLogs : activityLogs.filter(log => log.userName === user?.name);
 
   return (

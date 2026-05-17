@@ -1,0 +1,48 @@
+.driver-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.driver-settings h2 {
+  font-size: 1.5rem;
+  color: var(--text-main);
+}
+
+.driver-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #E9EDF7;
+}
+
+.driver-profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.driver-profile-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+}
+
+.driver-profile-info p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.settings-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

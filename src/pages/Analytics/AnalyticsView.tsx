@@ -1,32 +1,10 @@
 import Header from '../../components/layout/Header';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useData } from '../../context/DataContext';
+import { dailyDeliveries } from '../../data/mockData';
 import '../../pages/Report/Reports.css';
 
 export default function AnalyticsView() {
-  const { deliveryOrders } = useData();
-
-  const computedDailyDeliveries = Array.from({ length: 30 }, (_, i) => {
-    const day = i + 1;
-    const ordersOnDay = deliveryOrders.filter(o => {
-      const d = new Date(o.orderDate);
-      return !isNaN(d.getTime()) && d.getDate() === day;
-    });
-
-    const currentDate = new Date();
-    const dateOfThisDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    const isWeekend = dateOfThisDay.getDay() === 0 || dateOfThisDay.getDay() === 6;
-    
-    const count = ordersOnDay.length;
-    const isPeak = count >= 3;
-
-    return {
-      day: day.toString(),
-      weekday: (!isWeekend && !isPeak) ? count : 0,
-      weekend: (isWeekend && !isPeak) ? count : 0,
-      peak: isPeak ? count : 0
-    };
-  });
+  const computedDailyDeliveries = dailyDeliveries;
 
   return (
     <>

@@ -4,6 +4,7 @@ import { Plus, Search, Filter, Eye, Pencil, Trash2 } from 'lucide-react';
 import Header from '../../components/layout/Header';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 import './DeliveryOrders.css';
 
 export default function DeliveryOrders() {
@@ -13,9 +14,16 @@ export default function DeliveryOrders() {
   const [areaFilter, setAreaFilter] = useState('All Areas');
   const [showFilters, setShowFilters] = useState(false);
 
+  const { user } = useAuth();
+  const isOpTeam = user?.role === 'OP. TEAM';
+
   const uniqueAreas = Array.from(new Set(deliveryOrders.map(o => o.area).filter(Boolean)));
 
-  const filteredOrders = deliveryOrders.filter(order => {
+  const baseOrders = isOpTeam 
+    ? deliveryOrders.filter(o => o.encodedBy === user?.name || o.updatedBy === user?.name)
+    : deliveryOrders;
+
+  const filteredOrders = baseOrders.filter(order => {
     const matchesSearch =
       order.waybillNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -49,27 +57,27 @@ export default function DeliveryOrders() {
         {/* Summary Stats Bar */}
         <div className="order-stats-bar">
           <div className="order-stat">
-            <span className="order-stat-value">{deliveryOrders.length}</span>
+            <span className="order-stat-value">{baseOrders.length}</span>
             <span className="order-stat-label">TOTAL DELIVERIES</span>
           </div>
           <div className="order-stat-divider" />
           <div className="order-stat">
-            <span className="order-stat-value">{deliveryOrders.filter(o => o.status === 'Pending').length}</span>
+            <span className="order-stat-value">{baseOrders.filter(o => o.status === 'Pending').length}</span>
             <span className="order-stat-label">PENDING DISPATCH</span>
           </div>
           <div className="order-stat-divider" />
           <div className="order-stat">
-            <span className="order-stat-value">{deliveryOrders.filter(o => o.status === 'Delivered').length}</span>
+            <span className="order-stat-value">{baseOrders.filter(o => o.status === 'Delivered').length}</span>
             <span className="order-stat-label">DELIVERED TODAY</span>
           </div>
           <div className="order-stat-divider" />
           <div className="order-stat">
-            <span className="order-stat-value highlight-red">{deliveryOrders.filter(o => o.status === 'Failed').length}</span>
+            <span className="order-stat-value highlight-red">{baseOrders.filter(o => o.status === 'Failed').length}</span>
             <span className="order-stat-label">FAILED PICKUPS</span>
           </div>
           <div className="order-stat-divider" />
           <div className="order-stat">
-            <span className="order-stat-value">{deliveryOrders.filter(o => o.podStatus === 'Submitted').length}</span>
+            <span className="order-stat-value">{baseOrders.filter(o => o.podStatus === 'Submitted').length}</span>
             <span className="order-stat-label">POD SUBMITTED</span>
           </div>
         </div>

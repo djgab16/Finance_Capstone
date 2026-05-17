@@ -26,6 +26,12 @@
   gap: var(--gap);
 }
 
+@media (max-width: 900px) {
+  .edit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .edit-left { display: flex; flex-direction: column; gap: var(--gap); }
 .edit-right { display: flex; flex-direction: column; gap: 12px; }
 
@@ -39,6 +45,12 @@
 .form-row { display: grid; gap: 16px; margin-bottom: 16px; }
 .two-col { grid-template-columns: 1fr 1fr; }
 .three-col { grid-template-columns: 1fr 1fr 1fr; }
+
+@media (max-width: 768px) {
+  .two-col, .three-col {
+    grid-template-columns: 1fr;
+  }
+}
 
 .form-textarea {
   min-height: 80px;

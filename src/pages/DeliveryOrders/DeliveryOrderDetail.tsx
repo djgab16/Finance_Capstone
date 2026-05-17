@@ -39,11 +39,17 @@ export default function DeliveryOrderDetail() {
 
     const nextStatus = nextStatusMap[order.status] || 'Pending';
 
-    updateDeliveryOrder(order.id, {
+    const updatePayload: Partial<DeliveryOrder> = {
       status: nextStatus,
       lastUpdated: new Date().toLocaleString(),
       updatedBy: user?.name || 'System'
-    });
+    };
+
+    if (nextStatus === 'Delivered' || nextStatus === 'Completed') {
+      updatePayload.dateCompleted = new Date().toLocaleString();
+    }
+
+    updateDeliveryOrder(order.id, updatePayload);
 
     addActivityLog({
       id: Date.now().toString(),
@@ -172,6 +178,9 @@ export default function DeliveryOrderDetail() {
                 <div><span className="label">DATE ENCODED</span><strong>{order.dateEncoded}</strong></div>
                 <div><span className="label">LAST UPDATED</span><strong>{order.lastUpdated}</strong></div>
                 <div><span className="label">UPDATED BY</span><strong>{order.updatedBy}</strong></div>
+                {(order.status === 'Delivered' || order.status === 'Completed') && order.dateCompleted && (
+                  <div className="info-full"><span className="label">DATE COMPLETED</span><strong style={{ color: 'var(--status-active)' }}>{order.dateCompleted}</strong></div>
+                )}
               </div>
             </div>
           </div>

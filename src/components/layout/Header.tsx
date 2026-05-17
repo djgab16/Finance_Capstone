@@ -1,4 +1,4 @@
-import { Search, RefreshCw, Bell } from 'lucide-react';
+import { Search, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import './Header.css';
@@ -39,9 +39,6 @@ export default function Header({ title, subtitle, date, actions }: HeaderProps) 
         <button className="header-notification-btn" id="header-notifications" title="Notifications" onClick={() => navigate('/notifications')}>
           <Bell size={20} />
           {unreadCount > 0 && <span className="notification-dot" />}
-        </button>
-        <button className="header-refresh-btn" id="header-refresh" title="Refresh" onClick={() => window.location.reload()}>
-          <RefreshCw size={18} />
         </button>
         {actions}
       </div>

@@ -15,7 +15,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedUser = localStorage.getItem('speedex_user');
     if (savedUser) {
       const parsed = JSON.parse(savedUser) as Employee;
-      // Migration: Update name if it matches the old Super Admin
+      // Migration: Update name if it matches the old Admin
       if (parsed.id === 'EMP-001' && parsed.name === 'Vanessa D. Reuteras') {
         return { ...parsed, name: 'Taromaru Rex Gabriel' };
       }

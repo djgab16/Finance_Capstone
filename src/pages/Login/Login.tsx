@@ -103,7 +103,7 @@ export default function Login() {
               />
             </div>
             <small style={{ color: 'var(--text-secondary)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
-              Try: EMP-001 (Super Admin) or EMP-003 (Op. Team).
+              Try: EMP-001 (Admin) or EMP-003 (Op. Team).
             </small>
           </div>
 

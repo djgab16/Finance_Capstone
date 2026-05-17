@@ -25,18 +25,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [employees, setEmployees] = useState<Employee[]>(() => {
-    const saved = localStorage.getItem('speedex_employees');
-    if (saved) {
-      const parsed = JSON.parse(saved) as Employee[];
-      // Migration: Update old superadmin name and force unlock all accounts
-      return parsed.map(emp => {
-        const updatedEmp = { ...emp, status: 'Active' as const };
-        if (emp.id === 'EMP-001' && emp.name === 'Vanessa D. Reuteras') {
-          updatedEmp.name = 'Taromaru Rex Gabriel';
-        }
-        return updatedEmp;
-      });
-    }
+    // Force reload employees to reset IDs to 1-4 as requested
     return initialEmployees;
   });
 
@@ -46,8 +35,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [notifications, setNotifications] = useState<Notification[]>(() => {
-    const saved = localStorage.getItem('speedex_notifications');
-    return saved ? JSON.parse(saved) : initialNotifications;
+    // Force reload mock notifications so user can preview them
+    return initialNotifications;
   });
 
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(() => {

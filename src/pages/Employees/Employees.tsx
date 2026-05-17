@@ -87,9 +87,9 @@ export default function Employees() {
               <div className="form-group">
                 <label className="form-label">ROLE</label>
                 <select className="form-input" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value as Employee['role']})}>
-                  <option>OP. TEAM</option>
                   <option>ADMIN</option>
-                  <option>SUPER ADMIN</option>
+                  <option>OP. TEAM</option>
+                  <option>DRIVER</option>
                 </select>
               </div>
             </div>
@@ -134,7 +134,12 @@ export default function Employees() {
               </tr>
             </thead>
             <tbody>
-              {employees.map(emp => (
+              {[...employees]
+                .sort((a, b) => {
+                  const hierarchy: Record<string, number> = { 'ADMIN': 1, 'OP. TEAM': 2, 'DRIVER': 3 };
+                  return (hierarchy[a.role] || 99) - (hierarchy[b.role] || 99);
+                })
+                .map(emp => (
                 <tr key={emp.id}>
                   <td className="cell-name">{emp.name}</td>
                   <td className="cell-id">{emp.id}</td>
@@ -143,7 +148,7 @@ export default function Employees() {
                   <td><StatusBadge status={emp.status} size="sm" /></td>
                   <td className="cell-actions">
                     <button className="action-icon-btn" title="Edit" onClick={() => handleOpenForm(emp)}><Pencil size={14} /></button>
-                    {emp.role !== 'SUPER ADMIN' && (
+                    {emp.role !== 'ADMIN' && (
                       <button className="action-icon-btn danger" title="Remove" onClick={() => handleDelete(emp.id, emp.name)}><Trash2 size={14} /></button>
                     )}
                   </td>

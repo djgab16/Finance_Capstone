@@ -1,0 +1,104 @@
+import { useState } from 'react';
+import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import StatusBadge from '../../components/ui/StatusBadge';
+import { Package, MapPin, Navigation } from 'lucide-react';
+import './DriverDashboard.css';
+
+export default function DriverDashboard() {
+  const { deliveryOrders } = useData();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'Pending' | 'In Transit' | 'Completed'>('Pending');
+
+  // Fetch only deliveries assigned to this driver
+  const assignedRoutes = deliveryOrders.filter(
+    (order) => 
+      order.driverName === user?.name && 
+      order.status === activeTab
+  );
+
+  return (
+    <div className="driver-dashboard">
+      <div className="driver-greeting">
+        <h2>Hello, {user?.name?.split(' ')[0] || 'Driver'}</h2>
+        <p>You have {deliveryOrders.filter(o => o.driverName === user?.name && (o.status === 'Pending' || o.status === 'In Transit')).length} active deliveries today.</p>
+      </div>
+
+      <div className="driver-tabs">
+        <button 
+          className={`driver-tab ${activeTab === 'Pending' ? 'active' : ''}`}
+          onClick={() => setActiveTab('Pending')}
+        >
+          To Do
+        </button>
+        <button 
+          className={`driver-tab ${activeTab === 'In Transit' ? 'active' : ''}`}
+          onClick={() => setActiveTab('In Transit')}
+        >
+          In Transit
+        </button>
+        <button 
+          className={`driver-tab ${activeTab === 'Completed' ? 'active' : ''}`}
+          onClick={() => setActiveTab('Completed')}
+        >
+          Completed
+        </button>
+      </div>
+
+      <div className="route-list">
+        {assignedRoutes.length === 0 ? (
+          <div className="empty-state">
+            <Package size={48} color="var(--text-muted)" />
+            <p>No deliveries found for this status.</p>
+          </div>
+        ) : (
+          assignedRoutes.map((order) => (
+            <div 
+              key={order.id} 
+              className={`delivery-card ${order.status === 'In Transit' ? 'active-transit' : ''}`}
+              onClick={() => navigate(`/driver/delivery/${order.id}`)}
+            >
+              <div className="card-header">
+                <span className="waybill-no">{order.waybillNo}</span>
+                <StatusBadge status={order.status} size="sm" />
+              </div>
+              
+              <div className="card-body">
+                <div className="info-row">
+                  <Package size={16} className="info-icon" />
+                  <div className="info-content">
+                    <span className="info-label">Recipient</span>
+                    <span className="info-value">{order.recipientName}</span>
+                  </div>
+                </div>
+                
+                <div className="info-row">
+                  <MapPin size={16} className="info-icon" />
+                  <div className="info-content">
+                    <span className="info-label">Address</span>
+                    <span className="info-value address-text">{order.recipientAddress}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card-footer">
+                <button 
+                  className={`btn btn-block ${order.status === 'In Transit' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/driver/delivery/${order.id}`);
+                  }}
+                >
+                  {order.status === 'In Transit' ? 'Update Delivery' : 'View Details'}
+                  <Navigation size={16} style={{ marginLeft: '8px' }} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}

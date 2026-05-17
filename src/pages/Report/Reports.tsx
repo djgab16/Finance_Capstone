@@ -15,7 +15,6 @@ export default function Reports() {
     <>
       <Header
         title="Reports"
-        date="Sunday, March 29, 2026"
         actions={
           <button className="btn btn-primary btn-sm" id="export-report-btn">
             <Download size={14} /> EXPORT REPORT

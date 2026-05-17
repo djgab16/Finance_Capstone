@@ -151,7 +151,7 @@
   padding: 24px 16px;
 }
 
-.profile-card {
+.sidebar-profile-card {
   background: rgba(255, 255, 255, 0.04);
   border-radius: var(--radius-lg);
   padding: 12px;

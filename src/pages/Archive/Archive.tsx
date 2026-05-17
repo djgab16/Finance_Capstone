@@ -32,8 +32,7 @@ export default function Archive() {
   return (
     <>
       <Header
-        title="Archive — Completed Deliveries"
-        date="Sunday, March 29, 2026"
+        title="Data Archive"
         actions={<button className="btn btn-outline btn-sm" id="export-archive"><Download size={14} /> Export Archive</button>}
       />
       <div className="page-content">

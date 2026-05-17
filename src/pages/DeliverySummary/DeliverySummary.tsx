@@ -1,38 +1,9 @@
 import Header from '../../components/layout/Header';
-import { useData } from '../../context/DataContext';
+import { driverPerformance } from '../../data/mockData';
 import '../../pages/Report/Reports.css';
 
 export default function DeliverySummary() {
-  const { deliveryOrders } = useData();
-
-  const computedDriverPerformance = Object.values(deliveryOrders.reduce((acc, order) => {
-    if (!order.driverName) return acc;
-    if (!acc[order.driverName]) {
-      acc[order.driverName] = {
-        name: order.driverName,
-        initials: order.driverInitials,
-        color: order.driverColor,
-        totalOrders: 0,
-        delivered: 0,
-        failed: 0,
-      };
-    }
-    
-    acc[order.driverName].totalOrders++;
-    if (order.status === 'Delivered' || order.status === 'Completed') acc[order.driverName].delivered++;
-    if (order.status === 'Failed') acc[order.driverName].failed++;
-    
-    return acc;
-  }, {} as Record<string, { name: string; initials: string; color: string; totalOrders: number; delivered: number; failed: number }>)).map(d => {
-    const successRateRaw = d.totalOrders > 0 ? (d.delivered / d.totalOrders) : 0;
-    const successRate = (successRateRaw * 100).toFixed(1) + '%';
-    let rating = 'Average';
-    if (successRateRaw >= 0.9) rating = 'Excellent';
-    else if (successRateRaw >= 0.75) rating = 'Good';
-    else if (successRateRaw < 0.5 && d.totalOrders > 0) rating = 'Poor';
-    
-    return { ...d, successRate, rating } as { name: string; initials: string; color: string; totalOrders: number; delivered: number; failed: number; successRate: string; rating: string };
-  });
+  const computedDriverPerformance = driverPerformance;
 
   return (
     <>

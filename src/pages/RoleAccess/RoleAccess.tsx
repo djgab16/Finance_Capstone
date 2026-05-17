@@ -5,14 +5,14 @@ import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 
 const permissionsData = [
-  { module: 'View Dashboard Elements', op: true, admin: true, super: true },
-  { module: 'Manage Delivery Orders', op: true, admin: true, super: true },
-  { module: 'Upload/Verify PODs', op: true, admin: true, super: true },
-  { module: 'View Analytics & Summaries', op: false, admin: true, super: true },
-  { module: 'Manage Employee Directory', op: false, admin: true, super: true },
-  { module: 'View System Activity Logs', op: false, admin: true, super: true },
-  { module: 'Delete Records', op: false, admin: false, super: true },
-  { module: 'Modify Role Access', op: false, admin: false, super: true },
+  { module: 'View Dashboard Elements', op: true, admin: true },
+  { module: 'Manage Delivery Orders', op: true, admin: true },
+  { module: 'Upload/Verify PODs', op: true, admin: true },
+  { module: 'View Analytics & Summaries', op: false, admin: true },
+  { module: 'Manage Employee Directory', op: false, admin: true },
+  { module: 'View System Activity Logs', op: false, admin: true },
+  { module: 'Delete Records', op: false, admin: false },
+  { module: 'Modify Role Access', op: false, admin: false },
 ];
 
 export default function RoleAccess() {
@@ -21,7 +21,7 @@ export default function RoleAccess() {
   const { addActivityLog } = useData();
   const { user } = useAuth();
 
-  const handleToggle = (index: number, role: 'op' | 'admin' | 'super') => {
+  const handleToggle = (index: number, role: 'op' | 'admin') => {
     const updated = [...permissions];
     updated[index][role] = !updated[index][role];
     setPermissions(updated);
@@ -34,8 +34,8 @@ export default function RoleAccess() {
       id: Date.now().toString(),
       timestamp: new Date().toLocaleString(),
       userName: user?.name || 'System',
-      userRole: user?.role || 'Super Admin',
-      userInitials: 'SA',
+      userRole: user?.role || 'Admin',
+      userInitials: 'AD',
       userColor: '#E31A1A',
       action: 'Update',
       description: 'Modified role access permission matrix'
@@ -58,7 +58,6 @@ export default function RoleAccess() {
                 <th>MODULE FEATURE</th>
                 <th style={{ textAlign: 'center' }}>OP. TEAM</th>
                 <th style={{ textAlign: 'center' }}>ADMIN</th>
-                <th style={{ textAlign: 'center' }}>SUPER ADMIN</th>
               </tr>
             </thead>
             <tbody>
@@ -67,7 +66,6 @@ export default function RoleAccess() {
                   <td><strong>{p.module}</strong></td>
                   <td style={{ textAlign: 'center' }}><input type="checkbox" checked={p.op} onChange={() => handleToggle(idx, 'op')} style={{ transform: 'scale(1.2)' }} /></td>
                   <td style={{ textAlign: 'center' }}><input type="checkbox" checked={p.admin} onChange={() => handleToggle(idx, 'admin')} style={{ transform: 'scale(1.2)' }} /></td>
-                  <td style={{ textAlign: 'center' }}><input type="checkbox" checked={p.super} onChange={() => handleToggle(idx, 'super')} style={{ transform: 'scale(1.2)' }} disabled /></td>
                 </tr>
               ))}
             </tbody>

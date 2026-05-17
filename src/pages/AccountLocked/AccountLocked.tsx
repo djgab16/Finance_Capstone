@@ -41,11 +41,11 @@ export default function AccountLocked() {
           <strong>HOW TO UNLOCK YOUR ACCOUNT</strong>
           <div className="locked-step">
             <span className="locked-step-num">1</span>
-            <p>Contact your <strong>Super Administrator</strong> to request account reactivation.</p>
+            <p>Contact your <strong>Administrator</strong> to request account reactivation.</p>
           </div>
           <div className="locked-step">
             <span className="locked-step-num">2</span>
-            <p>The Super Admin will verify your identity and <strong>reactivate your account</strong> in the system.</p>
+            <p>The Administrator will verify your identity and <strong>reactivate your account</strong> in the system.</p>
           </div>
           <div className="locked-step">
             <span className="locked-step-num">3</span>

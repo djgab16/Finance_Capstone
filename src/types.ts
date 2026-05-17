@@ -1,6 +1,6 @@
 export type DeliveryStatus = 'Pending' | 'In Transit' | 'Delivered' | 'Completed' | 'Failed' | 'Returned';
 export type PODStatus = 'Submitted' | 'No POD' | 'Not Submitted';
-export type UserRole = 'SUPER ADMIN' | 'ADMIN' | 'OP. TEAM' | 'DRIVER';
+export type UserRole = 'ADMIN' | 'OP. TEAM' | 'DRIVER';
 export type AccountStatus = 'Active' | 'Pending' | 'Locked';
 export type NotificationType = 'alert' | 'success' | 'system' | 'info';
 export type ActionType = 'Create' | 'Update' | 'Assign' | 'POD Upload' | 'Login' | 'Archive' | 'Delete';
@@ -36,6 +36,9 @@ export interface DeliveryOrder {
   weight: string;
   declaredValue: string;
   podImage?: string;
+  gpsCoordinates?: { lat: number; lng: number };
+  failureReason?: string;
+  failureRemarks?: string;
   specialInstructions?: string;
   orderDate: string;
   expectedDelivery: string;

@@ -1,0 +1,150 @@
+.driver-delivery-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 80px; /* space for fixed buttons if needed, or just regular scroll */
+}
+
+.detail-header-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #E9EDF7;
+}
+
+.detail-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.waybill-no-large {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+}
+
+.package-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.detail-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #E9EDF7;
+}
+
+.detail-section h3 {
+  font-size: 1.05rem;
+  color: var(--text-main);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.info-item.align-top {
+  align-items: flex-start;
+}
+
+.info-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-text .label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-text .value {
+  font-size: 1rem;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.info-text .value a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.address-block {
+  font-weight: 500;
+}
+
+.alert-item {
+  background-color: #FFF0E6;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px dashed #FFD4B0;
+}
+
+.alert-icon {
+  color: #B44D12;
+}
+
+.alert-label, .alert-value {
+  color: #B44D12 !important;
+}
+
+.action-buttons-container {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-massive {
+  padding: 18px 24px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-success {
+  background: var(--status-active);
+  color: white;
+  border: none;
+}
+.btn-success:active { background: #01955f; }
+
+.split-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}

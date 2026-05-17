@@ -20,7 +20,7 @@ export default function Dashboard() {
   const completedTasks = deliveryOrders.filter(o => o.status === 'Completed' || o.status === 'Delivered').length;
   const lockedAccounts = employees.filter(e => e.status === 'Locked').length;
 
-  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER ADMIN';
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <>
@@ -32,17 +32,7 @@ export default function Dashboard() {
       <div className="dashboard-content">
         {/* Stats Row */}
         <div className="stats-row">
-          {isAdmin && (
-            <StatCard
-              icon={<Users size={18} />}
-              iconColor="var(--primary)"
-              iconBg="var(--status-transit-bg)"
-              label="TOTAL EMPLOYEES"
-              value={totalEmployees}
-              subtitle="Current active staff"
-              accentColor="#01B574"
-            />
-          )}
+
           <StatCard
             icon={<ClipboardList size={18} />}
             iconColor="var(--status-pending)"
@@ -63,60 +53,12 @@ export default function Dashboard() {
             subtitleColor="var(--status-active)"
             accentColor="#00A99D"
           />
-          {isAdmin && (
-            <StatCard
-              icon={<AlertCircle size={18} />}
-              iconColor="var(--status-failed)"
-              iconBg="var(--status-failed-bg)"
-              label="LOCKED ACCOUNTS"
-              value={lockedAccounts}
-              subtitle="Needs admin action"
-              subtitleColor="var(--status-failed)"
-              accentColor="#E31A1A"
-            />
-          )}
+
         </div>
 
         {/* Main Content Grid */}
         <div className="dashboard-grid">
-          {/* Employees Table (Admin only) */}
-          {isAdmin && (
-            <div className="card dashboard-employees">
-              <div className="card-header">
-                <h3>Recent Employees</h3>
-                <a href="/employees" className="view-all-link">View all →</a>
-              </div>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>NAME</th>
-                    <th>ID</th>
-                    <th>ROLE</th>
-                    <th>SYSTEM ACCESS</th>
-                    <th>STATUS</th>
-                    <th>ACTIONS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.slice(0, 5).map(emp => (
-                    <tr key={emp.id}>
-                      <td className="cell-name">{emp.name}</td>
-                      <td className="cell-id">{emp.id}</td>
-                      <td><RoleBadge role={emp.role} /></td>
-                      <td className="cell-muted">{emp.systemAccess}</td>
-                      <td><StatusBadge status={emp.status} size="sm" /></td>
-                      <td className="cell-actions">
-                        <button className="action-icon-btn" title="Edit" onClick={() => navigate('/employees')}><Pencil size={14} /></button>
-                        {emp.role !== 'SUPER ADMIN' && (
-                          <button className="action-icon-btn danger" title="Remove" onClick={() => { if(window.confirm('Are you sure you want to remove this employee?')) deleteEmployee(emp.id); }}><X size={14} /></button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+
 
           {/* Activity Feed */}
           <div className="card dashboard-activity">
@@ -146,26 +88,7 @@ export default function Dashboard() {
 
         {/* Bottom Row */}
         <div className="dashboard-bottom-row">
-          {/* Quick Actions */}
-          <div className="card dashboard-quick-actions">
-            <h3>Quick Actions</h3>
-            <div className="quick-actions-grid">
-              {isAdmin && (
-                <button className="quick-action-btn" onClick={() => navigate('/employees')}>
-                  <div className="quick-action-icon" style={{ background: 'var(--primary)' }}>
-                    <Users size={20} color="white" />
-                  </div>
-                  <span>Add Employee</span>
-                </button>
-              )}
-              <button className="quick-action-btn" onClick={() => navigate('/delivery-orders/new/edit')}>
-                <div className="quick-action-icon" style={{ background: 'var(--status-pending)' }}>
-                  <ClipboardList size={20} color="white" />
-                </div>
-                <span>Create Task</span>
-              </button>
-            </div>
-          </div>
+
 
           {/* System Status */}
           <div className="card dashboard-system-status">
@@ -226,35 +149,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Role Distribution (Admin Only) */}
-          {isAdmin && (
-            <div className="card dashboard-role-dist">
-              <h3>Role Distribution</h3>
-            <div className="role-bars">
-              <div className="role-bar-item">
-                <span className="role-bar-label">Op. Team</span>
-                <div className="role-bar-track">
-                  <div className="role-bar-fill" style={{ width: `${(employees.filter(e => e.role === 'OP. TEAM').length / employees.length) * 100}%`, background: 'var(--primary)' }} />
-                </div>
-                <span className="role-bar-value">{employees.filter(e => e.role === 'OP. TEAM').length}</span>
-              </div>
-              <div className="role-bar-item">
-                <span className="role-bar-label">Admin</span>
-                <div className="role-bar-track">
-                  <div className="role-bar-fill" style={{ width: `${(employees.filter(e => e.role === 'ADMIN').length / employees.length) * 100}%`, background: 'var(--role-ops-team)' }} />
-                </div>
-                <span className="role-bar-value">{employees.filter(e => e.role === 'ADMIN').length}</span>
-              </div>
-              <div className="role-bar-item">
-                <span className="role-bar-label">Super Admin</span>
-                <div className="role-bar-track">
-                  <div className="role-bar-fill" style={{ width: `${(employees.filter(e => e.role === 'SUPER ADMIN').length / employees.length) * 100}%`, background: 'var(--status-active)' }} />
-                </div>
-                <span className="role-bar-value">{employees.filter(e => e.role === 'SUPER ADMIN').length}</span>
-              </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>

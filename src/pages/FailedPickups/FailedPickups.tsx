@@ -31,7 +31,7 @@ export default function FailedPickups() {
 
   return (
     <>
-      <Header title="Failed Pickup Monitoring" subtitle="Management" date="Sunday, March 29, 2026" />
+      <Header title="Failed Pickup Monitoring" subtitle="Management" />
       <div className="page-content">
         <div className="stats-row" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
           <StatCard icon={<AlertTriangle size={18} />} iconColor="var(--status-failed)" iconBg="var(--status-failed-bg)" label="TOTAL FAILED PICKUPS" value={failedOrdersAll.length} subtitle="Needs immediate action" subtitleColor="var(--status-failed)" />

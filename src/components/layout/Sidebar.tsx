@@ -1,7 +1,7 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ClipboardList, FileText, BarChart3,
-  Settings, Activity, LogOut
+  Settings, Activity, LogOut, FileBarChart
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo.png';
@@ -18,17 +18,17 @@ interface NavLinkConfig {
 
 const mainLinks: NavLinkConfig[] = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/employees', icon: Users, label: 'Employees', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
   { to: '/tasks', icon: ClipboardList, label: 'Tasks' },
 ];
 
 const integrationLinks: NavLinkConfig[] = [
-  { to: '/delivery-summary', icon: FileText, label: 'Delivery Summary', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
-  { to: '/analytics', icon: BarChart3, label: 'Analytics View', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
+  { to: '/reports', icon: FileBarChart, label: 'Reports', allowedRoles: ['ADMIN'] },
+  { to: '/delivery-summary', icon: FileText, label: 'Delivery Summary', allowedRoles: ['ADMIN'] },
+  { to: '/analytics', icon: BarChart3, label: 'Analytics View', allowedRoles: ['ADMIN'] },
 ];
 
 const systemLinks: NavLinkConfig[] = [
-  { to: '/settings', icon: Settings, label: 'Settings', allowedRoles: ['SUPER ADMIN', 'ADMIN'] },
+  { to: '/settings', icon: Settings, label: 'Settings', allowedRoles: ['ADMIN'] },
   { to: '/activity-logs', icon: Activity, label: 'Activity Logs' },
 ];
 
@@ -122,7 +122,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-footer-profile">
-        <div className="profile-card">
+        <div className="sidebar-profile-card">
           <div className="profile-avatar">{user ? getInitials(user.name) : '??'}</div>
           <div className="profile-info">
             <span className="profile-name">{user?.name || 'Guest User'}</span>

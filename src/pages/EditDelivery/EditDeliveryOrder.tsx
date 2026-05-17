@@ -15,17 +15,31 @@ export default function EditDeliveryOrder() {
   const { user } = useAuth();
 
   const isNew = id === 'new';
+  const isDriver = user?.role === 'DRIVER';
+  const isReadOnly = !isNew || isDriver;
+  const inputStyle = isReadOnly ? { background: 'var(--bg-main)' } : {};
+
   const [formData, setFormData] = useState<Partial<DeliveryOrder>>({});
 
   useEffect(() => {
     if (!isNew) {
       const order = deliveryOrders.find(o => o.id === id);
-      if (order && formData.id !== id) {
-        setFormData(order);
-      } else if (!order) {
-        navigate('/delivery-orders');
+      if (order) {
+        if (isDriver && order.driverName !== user?.name) {
+          navigate('/tasks');
+          return;
+        }
+        if (formData.id !== id) {
+          setFormData(order);
+        }
+      } else {
+        navigate(isDriver ? '/tasks' : '/delivery-orders');
       }
     } else {
+      if (isDriver) {
+        navigate('/tasks');
+        return;
+      }
       setFormData({
         waybillNo: `SPX-2026-${Math.floor(1000 + Math.random() * 9000)}`,
         orderDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
@@ -102,7 +116,7 @@ export default function EditDeliveryOrder() {
         description: `Updated delivery order ${formData.waybillNo}`,
         reference: formData.waybillNo
       });
-      navigate(`/delivery-orders/${id}`);
+      navigate(isDriver ? '/tasks' : `/delivery-orders/${id}`);
     }
   };
 
@@ -129,23 +143,25 @@ export default function EditDeliveryOrder() {
   return (
     <>
       <Header
-        title={isNew ? "Create New Order" : "Edit Order"}
+        title={isNew ? "Create New Order" : (isDriver ? "Update Order" : "Edit Order")}
         subtitle={isNew ? "Delivery Orders" : `Delivery Orders · ${formData.waybillNo}`}
         date={new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         actions={<span className="edit-mode-badge">● {isNew ? 'Create Mode' : 'Edit Mode'}</span>}
       />
       <div className="page-content">
-        <div className="edit-warning">
-          <AlertTriangle size={18} />
-          <p><strong>Notice:</strong> Please ensure all required information (*) is filled correctly. Waybill numbers are system-generated but can be modified before first save.</p>
-        </div>
+        {!isDriver && (
+          <div className="edit-warning">
+            <AlertTriangle size={18} />
+            <p><strong>Notice:</strong> Please ensure all required information (*) is filled correctly. Waybill numbers are system-generated but can be modified before first save.</p>
+          </div>
+        )}
 
         <div className="edit-grid">
           <div className="edit-left">
             <div className="card">
               <div className="card-header">
                 <h4>Order Information</h4>
-                {!isNew && <span className="locked-tag">🔒 Waybill Locked</span>}
+                {!isNew && !isDriver && <span className="locked-tag">🔒 Waybill Locked</span>}
               </div>
               <div className="form-row three-col">
                 <div className="form-group">
@@ -156,7 +172,7 @@ export default function EditDeliveryOrder() {
                     value={formData.waybillNo}
                     onChange={handleChange}
                     readOnly={!isNew}
-                    style={!isNew ? { background: 'var(--bg-main)' } : {}}
+                    style={!isNew ? inputStyle : {}}
                   />
                 </div>
                 <div className="form-group">
@@ -168,7 +184,8 @@ export default function EditDeliveryOrder() {
                       className="form-input"
                       value={formData.orderDate}
                       onChange={handleChange}
-                      style={{ paddingLeft: '42px' }}
+                      readOnly={isReadOnly}
+                      style={{ paddingLeft: '42px', ...inputStyle }}
                     />
                   </div>
                 </div>
@@ -181,7 +198,8 @@ export default function EditDeliveryOrder() {
                       className="form-input"
                       value={formData.expectedDelivery}
                       onChange={handleChange}
-                      style={{ paddingLeft: '42px', borderColor: 'var(--primary)' }}
+                      readOnly={isReadOnly}
+                      style={{ paddingLeft: '42px', borderColor: 'var(--primary)', ...inputStyle }}
                     />
                   </div>
                 </div>
@@ -189,11 +207,11 @@ export default function EditDeliveryOrder() {
               <div className="form-row three-col" style={{ marginTop: '16px' }}>
                 <div className="form-group">
                   <label className="form-label">AREA / ROUTE <span style={{ color: 'var(--status-failed)' }}>*</span></label>
-                  <input name="area" className="form-input" value={formData.area} onChange={handleChange} placeholder="e.g. Quezon City" />
+                  <input name="area" className="form-input" value={formData.area} onChange={handleChange} placeholder="e.g. Quezon City" readOnly={isReadOnly} style={inputStyle} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">PACKAGE TYPE</label>
-                  <input name="packageType" className="form-input" value={formData.packageType} onChange={handleChange} placeholder="e.g. Parcel" />
+                  <input name="packageType" className="form-input" value={formData.packageType} onChange={handleChange} placeholder="e.g. Parcel" readOnly={isReadOnly} style={inputStyle} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">STATUS</label>
@@ -213,16 +231,16 @@ export default function EditDeliveryOrder() {
               <div className="form-row two-col">
                 <div className="form-group">
                   <label className="form-label">CLIENT NAME <span style={{ color: 'var(--status-failed)' }}>*</span></label>
-                  <input name="clientName" className="form-input" value={formData.clientName} onChange={handleChange} />
+                  <input name="clientName" className="form-input" value={formData.clientName} onChange={handleChange} readOnly={isReadOnly} style={inputStyle} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">CONTACT NUMBER</label>
-                  <input name="contactNumber" className="form-input" value={formData.contactNumber} onChange={handleChange} />
+                  <input name="contactNumber" className="form-input" value={formData.contactNumber} onChange={handleChange} readOnly={isReadOnly} style={inputStyle} />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">SENDER ADDRESS <span style={{ color: 'var(--status-failed)' }}>*</span></label>
-                <textarea name="senderAddress" className="form-input form-textarea" value={formData.senderAddress} onChange={handleChange} />
+                <textarea name="senderAddress" className="form-input form-textarea" value={formData.senderAddress} onChange={handleChange} readOnly={isReadOnly} style={inputStyle} />
               </div>
             </div>
 
@@ -231,16 +249,16 @@ export default function EditDeliveryOrder() {
               <div className="form-row two-col">
                 <div className="form-group">
                   <label className="form-label">RECIPIENT NAME <span style={{ color: 'var(--status-failed)' }}>*</span></label>
-                  <input name="recipientName" className="form-input" value={formData.recipientName} onChange={handleChange} />
+                  <input name="recipientName" className="form-input" value={formData.recipientName} onChange={handleChange} readOnly={isReadOnly} style={inputStyle} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">CONTACT NUMBER <span style={{ color: 'var(--status-failed)' }}>*</span></label>
-                  <input name="recipientContact" className="form-input" value={formData.recipientContact} onChange={handleChange} />
+                  <input name="recipientContact" className="form-input" value={formData.recipientContact} onChange={handleChange} readOnly={isReadOnly} style={inputStyle} />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">DELIVERY ADDRESS <span style={{ color: 'var(--status-failed)' }}>*</span></label>
-                <textarea name="recipientAddress" className="form-input form-textarea" value={formData.recipientAddress} onChange={handleChange} />
+                <textarea name="recipientAddress" className="form-input form-textarea" value={formData.recipientAddress} onChange={handleChange} readOnly={isReadOnly} style={inputStyle} />
               </div>
             </div>
           </div>
@@ -291,8 +309,8 @@ export default function EditDeliveryOrder() {
             </div>
 
             <button className="btn btn-primary btn-lg" onClick={handleSave}><Save size={16} /> {isNew ? 'CREATE ORDER' : 'SAVE CHANGES'}</button>
-            <button className="btn btn-outline" onClick={() => navigate(-1)}><Undo2 size={16} /> Discard</button>
-            {!isNew && <button className="btn btn-danger" onClick={handleDelete}><Trash2 size={16} /> Delete Order</button>}
+            <button className="btn btn-outline" onClick={() => navigate(-1)}><Undo2 size={16} /> {isDriver ? 'Back' : 'Discard'}</button>
+            {!isNew && !isDriver && <button className="btn btn-danger" onClick={handleDelete}><Trash2 size={16} /> Delete Order</button>}
           </div>
         </div>
       </div>
