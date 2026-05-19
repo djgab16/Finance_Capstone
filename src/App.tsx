@@ -14,7 +14,6 @@ import Reports from './pages/Report/Reports';
 import Archive from './pages/Archive/Archive';
 import ActivityLogs from './pages/ActivityLogs/ActivityLogs';
 import FailedPickups from './pages/FailedPickups/FailedPickups';
-import Employees from './pages/Employees/Employees';
 import Settings from './pages/Settings/Settings';
 import DeliverySummary from './pages/DeliverySummary/DeliverySummary';
 import AnalyticsView from './pages/Analytics/AnalyticsView';
@@ -23,7 +22,8 @@ import DeliveryHistoryLog from './pages/DeliveryOrders/DeliveryHistoryLog';
 import DriverDashboard from './pages/DRIVER/DriverDashboard';
 import QRScannerView from './pages/DRIVER/QRScannerView';
 import DriverDeliveryDetail from './pages/DRIVER/DriverDeliveryDetail';
-import DriverSettings from './pages/Driver/DriverSettings';
+import DriverSettings from './pages/DRIVER/DriverSettings';
+import PublicTracking from './pages/PublicTracking/PublicTracking';
 import { useAuth } from './context/AuthContext';
 
 const RootRedirect = () => {
@@ -39,6 +39,9 @@ export default function App() {
         {/* Auth Pages (no sidebar) */}
         <Route path="/login" element={<Login />} />
         <Route path="/account-locked" element={<AccountLocked />} />
+        
+        {/* Public Tracking Portal */}
+        <Route path="/tracking" element={<PublicTracking />} />
 
         {/* Protected Dashboard Pages (with sidebar) */}
         <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'OP. TEAM']} />}>

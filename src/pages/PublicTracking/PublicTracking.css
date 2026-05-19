@@ -1,0 +1,120 @@
+/* PublicTracking.css - Standardized enterprise styling */
+
+.public-tracking-container {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
+
+/* Layout */
+.public-tracking-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.public-header {
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.logo-brand {
+  display: flex;
+  align-items: center;
+}
+
+.public-main {
+  flex: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Error Card */
+.tracking-error-card {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid var(--status-failed-bg);
+  background: #FFF1F1;
+}
+
+.tracking-error-card h3 {
+  color: var(--status-failed);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.tracking-error-card p {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Results View */
+.tracking-results-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.results-header-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 2rem;
+}
+
+.results-header-card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.waybill-badge {
+  background: var(--status-transit-bg);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  border: 1px solid var(--primary);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .public-main {
+    padding: 1rem;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-header-card h2 {
+    font-size: 1.5rem;
+  }
+}

@@ -2,9 +2,9 @@ import type { Employee, DeliveryOrder, Notification, ActivityLog, DriverPerforma
 
 export const employees: Employee[] = [
   { id: 'EMP-001', name: 'Taromaru Rex Gabriel', role: 'ADMIN', systemAccess: 'All Systems', status: 'Active' },
-  { id: 'EMP-002', name: 'David Jr. M. Gabriel', role: 'ADMIN', systemAccess: 'Delivery Tracker', status: 'Active' },
-  { id: 'EMP-003', name: 'John Angelo M. Reveche', role: 'OP. TEAM', systemAccess: 'Delivery Tracker', status: 'Active' },
-  { id: 'EMP-004', name: 'Conag, Reca M.', role: 'DRIVER', systemAccess: 'Driver App', status: 'Active' },
+  { id: 'EMP-002', name: 'John Angelo M. Reveche', role: 'OP. TEAM', systemAccess: 'Delivery Tracker', status: 'Active' },
+  { id: 'EMP-003', name: 'Conag, Reca M.', role: 'DRIVER', systemAccess: 'Driver App', status: 'Active' },
+  { id: 'EMP-004', name: 'David Jr. M. Gabriel', role: 'ADMIN', systemAccess: 'Delivery Tracker', status: 'Active' },
 ];
 
 export const deliveryOrders: DeliveryOrder[] = [
