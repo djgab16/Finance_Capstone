@@ -1,9 +1,21 @@
-export type DeliveryStatus = 'Pending' | 'In Transit' | 'Delivered' | 'Completed' | 'Failed' | 'Returned';
-export type PODStatus = 'Submitted' | 'No POD' | 'Not Submitted';
-export type UserRole = 'ADMIN' | 'OP. TEAM' | 'DRIVER';
+export type UserRole = 'ADMIN' | 'OP. TEAM';
 export type AccountStatus = 'Active' | 'Pending' | 'Locked';
 export type NotificationType = 'alert' | 'success' | 'system' | 'info';
-export type ActionType = 'Create' | 'Update' | 'Assign' | 'POD Upload' | 'Login' | 'Archive' | 'Delete';
+export type ActionType =
+  | 'Create Invoice'
+  | 'Update Invoice'
+  | 'Record Payment'
+  | 'Add Client'
+  | 'Update Client'
+  | 'Archive'
+  | 'Login'
+  | 'Logout'
+  | 'Export Report';
+
+export type PaymentStatus = 'Paid' | 'Unpaid' | 'Partially Paid' | 'Overdue';
+export type AgingBucket = 'Current' | '1-30' | '31-60' | '61-90' | '90+';
+export type PaymentMethod = 'Cash' | 'Check' | 'Bank Transfer' | 'GCash';
+export type ClientStatus = 'Active' | 'Inactive';
 
 export interface Employee {
   id: string;
@@ -13,48 +25,73 @@ export interface Employee {
   status: AccountStatus;
 }
 
-export interface DeliveryOrder {
+export interface Client {
   id: string;
-  waybillNo: string;
-  clientName: string;
-  clientType: string;
+  clientCode: string;
+  name: string;
+  businessName: string;
+  contactPerson: string;
   contactNumber: string;
-  senderAddress: string;
-  recipientName: string;
-  recipientContact: string;
-  recipientAddress: string;
-  area: string;
-  landmark?: string;
-  driverName: string;
-  driverInitials: string;
-  driverColor: string;
-  status: DeliveryStatus;
-  podStatus: PODStatus;
-  packageType: string;
-  packageDescription: string;
-  itemCount: number;
-  weight: string;
-  declaredValue: string;
-  podImage?: string;
-  gpsCoordinates?: { lat: number; lng: number };
-  failureReason?: string;
-  failureRemarks?: string;
-  specialInstructions?: string;
-  orderDate: string;
-  expectedDelivery: string;
-  dateCompleted?: string;
+  email: string;
+  address: string;
+  tin?: string;
+  creditLimit: number;
+  currentBalance: number;
+  totalBilled: number;
+  totalPaid: number;
+  status: ClientStatus;
+  dateRegistered: string;
+  lastTransaction: string;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNo: string;
+  clientId: string;
+  clientName: string;
+  billingDate: string;
+  dueDate: string;
+  freightCharges: number;
+  otherCharges: number;
+  subtotal: number;
+  vatRate: number;
+  vatAmount: number;
+  surcharge: number;
+  totalAmount: number;
+  amountPaid: number;
+  balance: number;
+  paymentStatus: PaymentStatus;
+  agingBucket: AgingBucket;
+  daysOverdue: number;
+  description: string;
   encodedBy: string;
   dateEncoded: string;
   lastUpdated: string;
   updatedBy: string;
-  route: string;
+  archived?: boolean;
+}
+
+export interface Payment {
+  id: string;
+  orNumber: string;
+  invoiceId: string;
+  invoiceNo: string;
+  clientId: string;
+  clientName: string;
+  paymentDate: string;
+  amount: number;
+  paymentMethod: PaymentMethod;
+  referenceNumber?: string;
+  remarks?: string;
+  recordedBy: string;
+  dateRecorded: string;
 }
 
 export interface Notification {
   id: string;
   type: NotificationType;
   title: string;
-  waybillNo?: string;
+  invoiceNo?: string;
   description: string;
   timestamp: string;
   date: string;
@@ -73,17 +110,4 @@ export interface ActivityLog {
   action: ActionType;
   description: string;
   reference?: string;
-}
-
-export interface DriverPerformance {
-  name: string;
-  initials: string;
-  color: string;
-  totalOrders: number;
-  delivered: number;
-  failed: number;
-  podRate: string;
-  successRate: string;
-  avgTime: string;
-  rating: string;
 }

@@ -9,7 +9,7 @@ import './Login.css';
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { employees } = useData();
+  const { employees, addActivityLog } = useData();
 
   const [showPassword, setShowPassword] = useState(false);
   const [employeeId, setEmployeeId] = useState('');
@@ -19,16 +19,23 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    const employee = employees.find(emp => emp.id === employeeId);
-
+    const employee = employees.find((emp) => emp.id === employeeId);
     if (employee && password === 'password123') {
       if (employee.status === 'Locked') {
         navigate('/account-locked');
         return;
       }
-
       login(employee);
+      addActivityLog({
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleString(),
+        userName: employee.name,
+        userRole: employee.role,
+        userInitials: employee.name.split(' ').map((n) => n[0]).join('').substring(0, 2),
+        userColor: '#00A99D',
+        action: 'Login',
+        description: `User ${employee.name} logged in to ARCMS`,
+      });
       navigate('/dashboard');
     } else {
       setError('Invalid Employee ID or password. Please try again.');
@@ -40,29 +47,29 @@ export default function Login() {
       <div className="login-left">
         <div className="login-left-content">
           <div className="login-logo" style={{ background: 'transparent', padding: '0' }}>
-            <img src={logo} alt="30 Speedex Logo" style={{ height: '48px', objectFit: 'contain' }} />
+            <img src={logo} alt="ARCMS Logo" style={{ height: '48px', objectFit: 'contain' }} />
           </div>
-          <p className="login-tagline">COURIER & FORWARDER, INC.</p>
+          <p className="login-tagline">ACCOUNTS RECEIVABLE & COLLECTION MONITORING</p>
           <div className="login-steps">
             <div className="login-step">
               <div className="login-step-number">1</div>
               <div>
                 <strong>Enter Credentials</strong>
-                <p>Use your assigned Employee ID and password to access the system.</p>
+                <p>Use your assigned Employee ID and password to access ARCMS.</p>
               </div>
             </div>
             <div className="login-step">
               <div className="login-step-number">2</div>
               <div>
-                <strong>Manage Deliveries</strong>
-                <p>Track, assign, and update delivery orders in real-time.</p>
+                <strong>Manage Receivables</strong>
+                <p>Create invoices, record payments, and monitor outstanding balances in real-time.</p>
               </div>
             </div>
             <div className="login-step">
               <div className="login-step-number">3</div>
               <div>
-                <strong>Monitor Performance</strong>
-                <p>View analytics and reports to optimize logistics operations.</p>
+                <strong>Track Collections</strong>
+                <p>View aging reports and analytics to streamline collection workflows.</p>
               </div>
             </div>
           </div>
@@ -76,13 +83,27 @@ export default function Login() {
       <div className="login-right">
         <form className="login-form" onSubmit={handleSubmit}>
           <span className="login-form-label label" style={{ color: 'var(--primary)' }}>SECURE ACCESS</span>
-          <h2 className="login-form-title">Login to System</h2>
+          <h2 className="login-form-title">Login to ARCMS</h2>
           <p className="login-form-subtitle">Enter your credentials below to continue.</p>
 
           <hr className="login-divider" />
 
           {error && (
-            <div className="login-alert error" style={{ background: '#FFF1F1', border: '1px solid #FFCDCD', padding: '12px', borderRadius: '8px', marginBottom: '20px', color: '#E31A1A', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              className="login-alert error"
+              style={{
+                background: '#FFF1F1',
+                border: '1px solid #FFCDCD',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                color: '#E31A1A',
+                fontSize: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
               <AlertTriangleIcon />
               <p>{error}</p>
             </div>
@@ -97,13 +118,13 @@ export default function Login() {
                 className="form-input"
                 placeholder="EMP-001"
                 value={employeeId}
-                onChange={e => setEmployeeId(e.target.value)}
+                onChange={(e) => setEmployeeId(e.target.value)}
                 required
                 style={{ paddingLeft: '42px' }}
               />
             </div>
             <small style={{ color: 'var(--text-secondary)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
-              Try: EMP-001 (Admin), EMP-002 (Op. Team), EMP-003 (Driver).
+              Try: EMP-001 (Admin). Password: password123
             </small>
           </div>
 
@@ -116,7 +137,7 @@ export default function Login() {
                 className="form-input"
                 placeholder="Enter password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 style={{ paddingLeft: '42px' }}
               />
@@ -130,15 +151,19 @@ export default function Login() {
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px' }}>
               <input type="checkbox" /> Remember me
             </label>
-            <a href="#" style={{ color: 'var(--primary)', fontSize: '14px', textDecoration: 'none', fontWeight: '500' }}>Forgot password?</a>
+            <a href="#" style={{ color: 'var(--primary)', fontSize: '14px', textDecoration: 'none', fontWeight: '500' }}>
+              Forgot password?
+            </a>
           </div>
 
-          <button type="submit" className="btn btn-dark btn-lg login-submit-btn" id="login-btn">
+          <button type="submit" className="btn btn-dark btn-lg login-submit-btn">
             LOGIN TO DASHBOARD
           </button>
         </form>
 
-        <p className="login-footer">© 2026 <a href="#">Speedex Courier & Forwarder, Inc.</a> · All rights reserved.</p>
+        <p className="login-footer">
+          © 2026 <a href="#">ARCMS — Accounts Receivable & Collection Monitoring System</a> · All rights reserved.
+        </p>
       </div>
     </div>
   );

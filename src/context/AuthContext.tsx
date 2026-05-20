@@ -10,28 +10,33 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const STORAGE_KEY = 'arcms_user';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<Employee | null>(() => {
-    const savedUser = localStorage.getItem('speedex_user');
-    if (savedUser) {
+    if (typeof window === 'undefined') return null;
+    try {
+      const savedUser = localStorage.getItem(STORAGE_KEY);
+      if (!savedUser) return null;
       const parsed = JSON.parse(savedUser) as Employee;
-      // Migration: Update name if it matches the old Admin
-      if (parsed.id === 'EMP-001' && parsed.name === 'Vanessa D. Reuteras') {
-        return { ...parsed, name: 'Taromaru Rex Gabriel' };
+      if (parsed.role !== 'ADMIN' && parsed.role !== 'OP. TEAM') {
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
       }
       return parsed;
+    } catch {
+      return null;
     }
-    return null;
   });
 
   const login = (employee: Employee) => {
     setUser(employee);
-    localStorage.setItem('speedex_user', JSON.stringify(employee));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(employee));
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('speedex_user');
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   const isAuthenticated = !!user;

@@ -31,7 +31,7 @@ export default function Header({ title, subtitle, date, actions }: HeaderProps) 
           <Search size={16} className="header-search-icon" />
           <input
             type="text"
-            placeholder="Search employee, task..."
+            placeholder="Search invoice, client..."
             className="header-search-input"
             id="header-search"
           />

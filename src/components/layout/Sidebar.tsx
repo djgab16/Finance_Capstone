@@ -1,7 +1,21 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, ClipboardList, FileText, BarChart3,
-  Settings, Activity, LogOut, FileBarChart
+  LayoutDashboard,
+  Users,
+  FileText,
+  Receipt,
+  CircleDollarSign,
+  AlertTriangle,
+  Clock,
+  BarChart3,
+  FileBarChart,
+  Settings,
+  Activity,
+  Archive,
+  Bell,
+  Search,
+  ClipboardList,
+  LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../assets/logo.png';
@@ -18,18 +32,26 @@ interface NavLinkConfig {
 
 const mainLinks: NavLinkConfig[] = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/clients', icon: Users, label: 'Clients' },
+  { to: '/invoices', icon: FileText, label: 'Billing & Invoices' },
+  { to: '/payments', icon: Receipt, label: 'Payments' },
+  { to: '/aging', icon: Clock, label: 'Receivables Aging' },
+  { to: '/overdue', icon: AlertTriangle, label: 'Overdue Accounts' },
+  { to: '/search', icon: Search, label: 'Search' },
   { to: '/tasks', icon: ClipboardList, label: 'Tasks' },
 ];
 
-const integrationLinks: NavLinkConfig[] = [
+const reportLinks: NavLinkConfig[] = [
   { to: '/reports', icon: FileBarChart, label: 'Reports', allowedRoles: ['ADMIN'] },
-  { to: '/delivery-summary', icon: FileText, label: 'Delivery Summary', allowedRoles: ['ADMIN'] },
-  { to: '/analytics', icon: BarChart3, label: 'Analytics View', allowedRoles: ['ADMIN'] },
+  { to: '/collection-summary', icon: CircleDollarSign, label: 'Collection Summary', allowedRoles: ['ADMIN'] },
+  { to: '/analytics', icon: BarChart3, label: 'Analytics', allowedRoles: ['ADMIN'] },
 ];
 
 const systemLinks: NavLinkConfig[] = [
-  { to: '/settings', icon: Settings, label: 'Settings', allowedRoles: ['ADMIN'] },
+  { to: '/notifications', icon: Bell, label: 'Notifications' },
   { to: '/activity-logs', icon: Activity, label: 'Activity Logs' },
+  { to: '/archive', icon: Archive, label: 'Archive' },
+  { to: '/settings', icon: Settings, label: 'Settings', allowedRoles: ['ADMIN'] },
 ];
 
 export default function Sidebar() {
@@ -42,9 +64,13 @@ export default function Sidebar() {
     navigate('/login');
   };
 
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-  };
+  const getInitials = (name: string) =>
+    name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
 
   const hasAccess = (link: NavLinkConfig) => {
     if (!link.allowedRoles) return true;
@@ -56,12 +82,16 @@ export default function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-logo">
         <div className="login-logo" style={{ padding: '0', background: 'transparent' }}>
-          <img src={logo} alt="30 Speedex Logo" style={{ height: '36px', objectFit: 'contain' }} />
+          <img src={logo} alt="ARCMS Logo" style={{ height: '36px', objectFit: 'contain' }} />
         </div>
       </div>
 
       <div className="sidebar-role-section">
-        <div className={`sidebar-role-badge ${user?.role ? user.role.toLowerCase().replaceAll('.', '').replaceAll(' ', '-') : 'employee'}`}>
+        <div
+          className={`sidebar-role-badge ${
+            user?.role ? user.role.toLowerCase().replaceAll('.', '').replaceAll(' ', '-') : 'employee'
+          }`}
+        >
           <div className="role-dot-inner" />
           {user?.role || 'EMPLOYEE'}
         </div>
@@ -70,12 +100,14 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         <div className="nav-section">
           <span className="nav-section-title">MAIN MENU</span>
-          {mainLinks.filter(hasAccess).map(link => (
+          {mainLinks.filter(hasAccess).map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `nav-item ${isActive || (link.to === '/dashboard' && location.pathname === '/') ? 'nav-item-active' : ''}`
+                `nav-item ${
+                  isActive || (link.to === '/dashboard' && location.pathname === '/') ? 'nav-item-active' : ''
+                }`
               }
             >
               <link.icon size={18} />
@@ -84,16 +116,14 @@ export default function Sidebar() {
           ))}
         </div>
 
-        {integrationLinks.filter(hasAccess).length > 0 && (
+        {reportLinks.filter(hasAccess).length > 0 && (
           <div className="nav-section">
-            <span className="nav-section-title">INTEGRATION</span>
-            {integrationLinks.filter(hasAccess).map(link => (
+            <span className="nav-section-title">REPORTS</span>
+            {reportLinks.filter(hasAccess).map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
-                className={({ isActive }) =>
-                  `nav-item ${isActive ? 'nav-item-active' : ''}`
-                }
+                className={({ isActive }) => `nav-item ${isActive ? 'nav-item-active' : ''}`}
               >
                 <link.icon size={18} />
                 <span className="nav-item-label">{link.label}</span>
@@ -105,13 +135,11 @@ export default function Sidebar() {
         {systemLinks.filter(hasAccess).length > 0 && (
           <div className="nav-section">
             <span className="nav-section-title">SYSTEM</span>
-            {systemLinks.filter(hasAccess).map(link => (
+            {systemLinks.filter(hasAccess).map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
-                className={({ isActive }) =>
-                  `nav-item ${isActive ? 'nav-item-active' : ''}`
-                }
+                className={({ isActive }) => `nav-item ${isActive ? 'nav-item-active' : ''}`}
               >
                 <link.icon size={18} />
                 <span className="nav-item-label">{link.label}</span>

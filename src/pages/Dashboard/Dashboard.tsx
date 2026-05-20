@@ -1,155 +1,272 @@
-import { Users, ClipboardList, CheckCircle2, AlertCircle, Pencil, X, Package } from 'lucide-react';
+import { useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { Wallet, AlertTriangle, Users, TrendingUp, FileText, Receipt, Plus } from 'lucide-react';
 import Header from '../../components/layout/Header';
 import StatCard from '../../components/ui/StatCard';
-import RoleBadge from '../../components/ui/RoleBadge';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { dailyDeliveries } from '../../data/mockData';
+import { currencyTooltipFormatter, formatCurrency, formatDate } from '../../utils/finance';
+import type { AgingBucket } from '../../types';
 import './Dashboard.css';
 
+const BUCKETS: AgingBucket[] = ['Current', '1-30', '31-60', '61-90', '90+'];
+const BUCKET_COLORS: Record<AgingBucket, string> = {
+  Current: '#01B574',
+  '1-30': '#FFB547',
+  '31-60': '#00A99D',
+  '61-90': '#FF7B42',
+  '90+': '#E31A1A',
+};
+
 export default function Dashboard() {
-  const { employees, deleteEmployee, deliveryOrders, activityLogs } = useData();
+  const { invoices, payments, clients, activityLogs } = useData();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const totalEmployees = employees.length;
-  const activeTasks = deliveryOrders.filter(o => o.status === 'Pending' || o.status === 'In Transit').length;
-  const completedTasks = deliveryOrders.filter(o => o.status === 'Completed' || o.status === 'Delivered').length;
-  const lockedAccounts = employees.filter(e => e.status === 'Locked').length;
+  const totalAR = invoices.reduce((s, inv) => s + inv.balance, 0);
+  const collectedThisMonth = useMemo(() => {
+    const month = new Date().toISOString().slice(0, 7);
+    return payments.filter((p) => p.paymentDate.startsWith(month)).reduce((s, p) => s + p.amount, 0);
+  }, [payments]);
+  const overdueTotal = invoices
+    .filter((inv) => inv.paymentStatus === 'Overdue')
+    .reduce((s, inv) => s + inv.balance, 0);
+  const activeClients = clients.filter((c) => c.status === 'Active').length;
 
-  const isAdmin = user?.role === 'ADMIN';
+  const agingData = useMemo(
+    () =>
+      BUCKETS.map((b) => ({
+        bucket: b,
+        total: invoices.filter((inv) => inv.agingBucket === b && inv.balance > 0).reduce((s, inv) => s + inv.balance, 0),
+        color: BUCKET_COLORS[b],
+      })),
+    [invoices],
+  );
+
+  const recentInvoices = useMemo(
+    () => [...invoices].sort((a, b) => (a.billingDate < b.billingDate ? 1 : -1)).slice(0, 5),
+    [invoices],
+  );
+  const recentPayments = useMemo(
+    () => [...payments].sort((a, b) => (a.paymentDate < b.paymentDate ? 1 : -1)).slice(0, 5),
+    [payments],
+  );
 
   return (
     <>
       <Header
-        title="Board Overview"
-        subtitle={`${user?.role} Dashboard`}
+        title="Finance Dashboard"
+        subtitle={`${user?.role} · ARCMS`}
         date={new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
       />
       <div className="dashboard-content">
-        {/* Stats Row */}
-        <div className="stats-row">
-
+        <div className="stats-row" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
           <StatCard
-            icon={<ClipboardList size={18} />}
-            iconColor="var(--status-pending)"
-            iconBg="var(--status-pending-bg)"
-            label="ACTIVE TASKS"
-            value={activeTasks}
-            subtitle="Pending & In Transit"
-            subtitleColor="var(--status-active)"
-            accentColor="#FFB547"
-          />
-          <StatCard
-            icon={<CheckCircle2 size={18} />}
-            iconColor="var(--status-active)"
-            iconBg="var(--status-active-bg)"
-            label="TASKS COMPLETED"
-            value={completedTasks}
-            subtitle="Total successful deliveries"
-            subtitleColor="var(--status-active)"
+            icon={<Wallet size={18} />}
+            iconColor="var(--primary)"
+            iconBg="var(--status-transit-bg)"
+            label="TOTAL AR"
+            value={formatCurrency(totalAR)}
+            subtitle="Outstanding receivables"
             accentColor="#00A99D"
           />
-
+          <StatCard
+            icon={<TrendingUp size={18} />}
+            iconColor="var(--status-active)"
+            iconBg="var(--status-active-bg)"
+            label="COLLECTED THIS MONTH"
+            value={formatCurrency(collectedThisMonth)}
+            subtitle="Monthly inflow"
+            subtitleColor="var(--status-active)"
+            accentColor="#01B574"
+          />
+          <StatCard
+            icon={<AlertTriangle size={18} />}
+            iconColor="var(--status-failed)"
+            iconBg="var(--status-failed-bg)"
+            label="OVERDUE TOTAL"
+            value={formatCurrency(overdueTotal)}
+            subtitle="Needs collection"
+            subtitleColor="var(--status-failed)"
+            accentColor="#E31A1A"
+          />
+          <StatCard
+            icon={<Users size={18} />}
+            iconColor="var(--status-new)"
+            iconBg="var(--status-new-bg)"
+            label="ACTIVE CLIENTS"
+            value={activeClients}
+            subtitle={`${clients.length} total clients`}
+            accentColor="#4318FF"
+          />
         </div>
 
-        {/* Main Content Grid */}
-        <div className="dashboard-grid">
-
-
-          {/* Activity Feed */}
-          <div className="card dashboard-activity">
-            <div className="card-header">
-              <h3>{isAdmin ? 'Recent Activity' : 'Your Activity'}</h3>
-              <button className="text-link" onClick={() => navigate('/activity-logs')}>View All</button>
-            </div>
-            <div className="activity-feed-list">
-              {(isAdmin ? activityLogs : activityLogs.filter(log => log.userName === user?.name))
-                .slice(0, 8).map((log) => (
-                <div key={log.id} className="activity-feed-item">
-                  <div className="activity-feed-dot" style={{ background: log.userColor }} />
-                  <div className="activity-feed-content">
-                    <p className="activity-feed-text">
-                      <strong>{isAdmin ? log.userName : 'You'}</strong> {log.description}
-                    </p>
-                    <span className="activity-feed-time">{log.timestamp}</span>
-                  </div>
-                </div>
-              ))}
-              {(!isAdmin && activityLogs.filter(log => log.userName === user?.name).length === 0) && (
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No recent activity found.</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Row */}
-        <div className="dashboard-bottom-row">
-
-
-          {/* System Status */}
-          <div className="card dashboard-system-status">
-            <div className="card-header">
-              <h3>System Status</h3>
-              <span className="system-all-operational">All Operational</span>
-            </div>
-            <div className="system-status-list">
-              <div className="system-status-item">
-                <div className="system-icon" style={{ background: 'var(--status-transit-bg)', color: 'var(--primary)' }}>
-                  <Users size={16} />
-                </div>
-                <div className="system-info">
-                  <span className="system-name">Operation System</span>
-                  <span className="system-detail">{employees.length} employees active</span>
-                </div>
-                <span className="system-uptime">99.9%</span>
-              </div>
-              <div className="system-status-item">
-                <div className="system-icon" style={{ background: 'var(--status-failed-bg)', color: 'var(--status-failed)' }}>
-                  <ClipboardList size={16} />
-                </div>
-                <div className="system-info">
-                  <span className="system-name">Delivery Management</span>
-                  <span className="system-detail">{deliveryOrders.length} total orders</span>
-                </div>
-                <span className="system-uptime">99.7%</span>
-              </div>
-              <div className="system-status-item">
-                <div className="system-icon" style={{ background: 'var(--status-active-bg)', color: 'var(--status-active)' }}>
-                  <Package size={16} />
-                </div>
-                <div className="system-info">
-                  <span className="system-name">Delivery Tracker</span>
-                  <span className="system-detail">{activeTasks} active shipments</span>
-                </div>
-                <span className="system-uptime">98.2%</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Performance Graph (Visible to Everyone) */}
+        <div className="dashboard-grid" style={{ gridTemplateColumns: '2fr 1fr' }}>
           <div className="card dashboard-performance-graph">
             <div className="card-header">
-              <h3>Delivery Performance</h3>
-              <span className="system-all-operational text-sm" style={{ background: 'var(--status-transit-bg)', color: 'var(--primary)' }}>This Week</span>
+              <h3>Aging Snapshot</h3>
+              <span className="system-all-operational text-sm" style={{ background: 'var(--status-transit-bg)', color: 'var(--primary)' }}>
+                Outstanding by bucket
+              </span>
             </div>
-            <div style={{ width: '100%', height: '220px', marginTop: '16px' }}>
+            <div style={{ width: '100%', height: '240px', marginTop: '16px' }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dailyDeliveries}>
+                <BarChart data={agingData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E9EDF7" />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#A3AED0' }} />
-                  <Tooltip cursor={{ fill: 'rgba(0,0,0,0.02)' }} />
-                  <Bar dataKey="weekday" fill="var(--primary)" radius={[4, 4, 0, 0]} maxBarSize={40} name="Standard Deliveries" />
-                  <Bar dataKey="peak" fill="var(--status-pending)" radius={[4, 4, 0, 0]} maxBarSize={40} name="Peak Deliveries" />
+                  <XAxis dataKey="bucket" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#A3AED0' }} />
+                  <YAxis tick={{ fontSize: 11, fill: '#A3AED0' }} axisLine={false} tickLine={false} />
+                  <Tooltip formatter={currencyTooltipFormatter} cursor={{ fill: 'rgba(0,0,0,0.02)' }} />
+                  <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={50}>
+                    {agingData.map((entry) => (
+                      <Cell key={entry.bucket} fill={entry.color} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
+          <div className="card">
+            <div className="card-header">
+              <h3>Quick Actions</h3>
+            </div>
+            <div className="quick-actions-grid">
+              <button className="quick-action-btn" onClick={() => navigate('/invoices/new')}>
+                <div className="quick-action-icon" style={{ background: 'var(--status-transit-bg)' }}>
+                  <FileText size={22} color="var(--primary)" />
+                </div>
+                <span>New Invoice</span>
+              </button>
+              <button className="quick-action-btn" onClick={() => navigate('/payments/new')}>
+                <div className="quick-action-icon" style={{ background: 'var(--status-active-bg)' }}>
+                  <Receipt size={22} color="var(--status-active)" />
+                </div>
+                <span>Record Payment</span>
+              </button>
+              <button className="quick-action-btn" onClick={() => navigate('/clients/new')}>
+                <div className="quick-action-icon" style={{ background: 'var(--status-new-bg)' }}>
+                  <Users size={22} color="var(--status-new)" />
+                </div>
+                <span>Add Client</span>
+              </button>
+              <button className="quick-action-btn" onClick={() => navigate('/overdue')}>
+                <div className="quick-action-icon" style={{ background: 'var(--status-failed-bg)' }}>
+                  <AlertTriangle size={22} color="var(--status-failed)" />
+                </div>
+                <span>Overdue</span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        <div className="dashboard-bottom-row">
+          <div className="card">
+            <div className="card-header">
+              <h3>Recent Invoices</h3>
+              <Link to="/invoices" className="view-all-link">
+                View All →
+              </Link>
+            </div>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>INVOICE NO.</th>
+                  <th>CLIENT</th>
+                  <th>TOTAL</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentInvoices.map((inv) => (
+                  <tr key={inv.id} className="clickable-row" onClick={() => navigate(`/invoices/${inv.id}`)}>
+                    <td>
+                      <span className="cell-name" style={{ color: 'var(--primary)' }}>{inv.invoiceNo}</span>
+                      <div className="cell-sub">{formatDate(inv.billingDate)}</div>
+                    </td>
+                    <td>{inv.clientName}</td>
+                    <td>{formatCurrency(inv.totalAmount)}</td>
+                    <td>
+                      <StatusBadge status={inv.paymentStatus} size="sm" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="card">
+            <div className="card-header">
+              <h3>Recent Payments</h3>
+              <Link to="/payments" className="view-all-link">
+                View All →
+              </Link>
+            </div>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>OR NUMBER</th>
+                  <th>CLIENT</th>
+                  <th>AMOUNT</th>
+                  <th>METHOD</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentPayments.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} style={{ textAlign: 'center', padding: '24px', color: 'var(--text-secondary)' }}>
+                      No payments recorded yet.
+                    </td>
+                  </tr>
+                ) : (
+                  recentPayments.map((p) => (
+                    <tr key={p.id}>
+                      <td>
+                        <span className="cell-name" style={{ color: 'var(--primary)' }}>{p.orNumber}</span>
+                        <div className="cell-sub">{formatDate(p.paymentDate)}</div>
+                      </td>
+                      <td>{p.clientName}</td>
+                      <td>{formatCurrency(p.amount)}</td>
+                      <td>{p.paymentMethod}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="card dashboard-activity">
+          <div className="card-header">
+            <h3>Recent Activity</h3>
+            <Link to="/activity-logs" className="view-all-link">
+              View All →
+            </Link>
+          </div>
+          <div className="activity-feed-list">
+            {activityLogs.slice(0, 6).map((log) => (
+              <div key={log.id} className="activity-feed-item">
+                <div className="activity-feed-dot" style={{ background: log.userColor }} />
+                <div className="activity-feed-content">
+                  <p className="activity-feed-text">
+                    <strong>{log.userName}</strong> {log.description}
+                  </p>
+                  <span className="activity-feed-time">{log.timestamp}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate('/invoices/new')}
+          style={{ position: 'fixed', bottom: '24px', right: '24px', borderRadius: 'var(--radius-full)', padding: '12px 20px', display: 'none' }}
+          aria-hidden
+        >
+          <Plus size={16} /> New Invoice
+        </button>
       </div>
     </>
   );

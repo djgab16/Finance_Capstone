@@ -1,0 +1,201 @@
+.history-banner {
+  background: linear-gradient(135deg, #1B254B 0%, #2D3A6A 100%);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  color: white;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.history-banner-left {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex: 1;
+  min-width: 300px;
+}
+
+.history-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-title-area h2 {
+  color: white;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+}
+.history-title-area p {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.history-banner-details {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.history-banner-details .detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-banner-details .label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.65rem;
+}
+
+.history-banner-details .value {
+  color: white;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--gap);
+}
+
+@media (max-width: 900px) {
+  .history-grid { grid-template-columns: 1fr; }
+}
+
+.history-left, .history-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.timeline-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-entry {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+
+.timeline-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  border: 2px solid var(--border);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-icon.completed {
+  background: var(--status-active);
+  border-color: var(--status-active);
+  color: white;
+}
+
+.timeline-icon.pending {
+  background: var(--status-pending-bg);
+  border-color: var(--status-pending);
+  color: var(--status-pending);
+}
+
+.timeline-content {
+  background: var(--bg-main);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--border);
+}
+
+.timeline-content.border-left-green { border-left-color: var(--status-active); }
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.timeline-header h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.timeline-time { font-size: 0.72rem; color: var(--text-secondary); }
+
+.timeline-body p { font-size: 0.82rem; color: var(--text-primary); }
+
+.timeline-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.summary-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.summary-stat-card {
+  background: var(--bg-main);
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.summary-stat-val {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.summary-stat-val.green { color: var(--status-active); }
+
+.summary-stat-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-list { display: flex; flex-direction: column; gap: 0; }
+.info-list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+.info-list-item:last-child { border-bottom: none; }
+.info-list-item span:first-child { color: var(--text-secondary); }
+.info-list-item .teal { color: var(--primary); font-weight: 600; }
+
+.action-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(0,0,0,0.05);
+  color: var(--text-primary);
+}
+
+.card-header-view-all { font-size: 0.78rem; color: var(--primary); cursor: pointer; }

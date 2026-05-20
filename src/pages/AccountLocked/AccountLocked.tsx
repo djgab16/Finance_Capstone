@@ -13,24 +13,28 @@ export default function AccountLocked() {
         <span className="locked-label label" style={{ color: 'var(--status-failed)' }}>ACCOUNT LOCKED</span>
         <h2 className="locked-title">Access Restricted</h2>
         <p className="locked-text">
-          Your account has been deactivated due to multiple failed login attempts. Please contact your administrator.
+          Your ARCMS account has been deactivated due to multiple failed login attempts. Please contact your administrator.
         </p>
 
         <div className="locked-info-box">
           <div className="locked-info-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--status-failed)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--status-failed)" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4" />
+              <path d="M12 16h.01" />
+            </svg>
           </div>
           <div>
             <strong>Why was my account locked?</strong>
-            <p>The system automatically deactivates accounts after 3 consecutive failed login attempts to prevent unauthorized access.</p>
+            <p>The system automatically deactivates accounts after 3 consecutive failed login attempts to prevent unauthorized access to financial records.</p>
           </div>
         </div>
 
         <div className="locked-user-card">
-          <div className="locked-user-avatar">DG</div>
+          <div className="locked-user-avatar">TG</div>
           <div className="locked-user-info">
-            <strong>David Jr. M. Gabriel</strong>
-            <span>d.gabriel@speedex.com.ph</span>
+            <strong>Taromaru Rex Gabriel</strong>
+            <span>t.gabriel@arcms.local</span>
           </div>
           <span className="locked-user-badge">
             <Lock size={12} /> Locked
@@ -45,7 +49,7 @@ export default function AccountLocked() {
           </div>
           <div className="locked-step">
             <span className="locked-step-num">2</span>
-            <p>The Administrator will verify your identity and <strong>reactivate your account</strong> in the system.</p>
+            <p>The Administrator will verify your identity and <strong>reactivate your account</strong> in ARCMS.</p>
           </div>
           <div className="locked-step">
             <span className="locked-step-num">3</span>
@@ -53,17 +57,19 @@ export default function AccountLocked() {
           </div>
         </div>
 
-        <button className="btn btn-dark btn-lg locked-contact-btn" id="contact-admin-btn">
+        <button className="btn btn-dark btn-lg locked-contact-btn">
           <Mail size={18} />
           CONTACT ADMINISTRATOR
         </button>
 
-        <Link to="/login" className="locked-back-link" id="back-to-login">
+        <Link to="/login" className="locked-back-link">
           <ArrowLeft size={16} />
           Back to Login
         </Link>
 
-        <p className="locked-footer">© 2026 <a href="#">Speedex Courier & Forwarder, Inc.</a> · All rights reserved.</p>
+        <p className="locked-footer">
+          © 2026 <a href="#">ARCMS — Accounts Receivable & Collection Monitoring System</a> · All rights reserved.
+        </p>
       </div>
     </div>
   );
